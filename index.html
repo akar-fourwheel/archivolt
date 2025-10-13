@@ -150,35 +150,40 @@
 
     <!-- Header -->
     <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-3xl font-serif font-bold text-gray-900">
+        <nav
+            class="container mx-auto px-6 py-5 md:py-6 flex items-center justify-between space-x-3 md:space-x-6 overflow-hidden">
+            <a href="#" class="text-2xl md:text-3xl font-serif font-bold text-gray-900 whitespace-nowrap">
                 Archivolt
             </a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#designs" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Designs</a>
-                <a href="#architects" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Architects</a>
-                <a href="#how-it-works" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Process</a>
+
+            <div class="hidden md:flex items-center space-x-8 md:space-x-10">
+                <a href="#designs" class="nav-link text-gray-600 hover:text-gray-900 font-medium md:text-lg">Designs</a>
+                <a href="#architects"
+                    class="nav-link text-gray-600 hover:text-gray-900 font-medium md:text-lg">Architects</a>
+                <a href="#how-it-works"
+                    class="nav-link text-gray-600 hover:text-gray-900 font-medium md:text-lg">Process</a>
             </div>
-            <div class="flex items-center space-x-4">
-                <!-- <button id="login-btn"
-                    class="text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">Log
-                    In</button> -->
+
+            <div class="flex items-center space-x-3 sm:space-x-4 md:space-x-5 shrink-0">
                 <button id="get-started-btn"
-                    class="bg-gray-900 text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors">Get
-                    Started</button>
-                <button id="cart-btn" class="relative text-gray-600 hover:text-gray-900 ml-2">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    class="bg-gray-900 text-white text-sm md:text-base px-3 md:px-4 py-2 md:py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors whitespace-nowrap">
+                    Get Started
+                </button>
+
+                <button id="cart-btn" class="relative text-gray-600 hover:text-gray-900">
+                    <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
                         </path>
                     </svg>
                     <span id="cart-badge"
-                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs md:text-sm font-bold w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center hidden">0</span>
                 </button>
             </div>
         </nav>
     </header>
+
 
     <main>
         <!-- Hero Section -->
@@ -356,12 +361,12 @@
         </section>
 
         <section id="for-architects" class="py-20 md:py-28 bg-blue-600 text-white">
-            <div class="container mx-auto px-6 text-center max-w-3xl mx-auto">
-                <h2 class="text-4xl md:text-5xl font-serif font-bold">Join the Future of Architecture.</h2>
-                <p class="text-lg text-blue-200 mt-4 mb-8">Create your professional portfolio, reach a global clientele,
+            <div class="container mx-auto px-6 text-center max-w-3xl">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold">Join the Future of Architecture.</h2>
+                <p class="text-base sm:text-lg text-blue-200 mt-4 mb-8">Create your professional portfolio, reach a global clientele,
                     and build a new revenue stream from your existing body of work.</p>
                 <a href="architect_login.html"
-                    class="bg-white text-blue-600 px-10 py-4 rounded-lg font-bold hover:bg-gray-200 transition-colors text-lg shadow-lg">Become
+                    class="inline-block bg-white text-blue-600 px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-bold hover:bg-gray-200 transition-colors text-base sm:text-lg shadow-lg">Become
                     a Creator on Archivolt</a>
             </div>
         </section>
@@ -675,7 +680,7 @@
                 const project = projects.find(p => p.id === projectId);
                 if (!project) return;
                 let packagesHtml = project.packages.map((pkg, index) => `<div><input type="checkbox" id="pkg-${project.id}-${index}" class="package-checkbox hidden" data-price="${pkg.price}" data-name="${pkg.name}"><label for="pkg-${project.id}-${index}" class="checkbox-label border rounded-lg p-4 flex items-center cursor-pointer hover:border-blue-500 transition-all"><div class="checkbox-custom-box w-6 h-6 border-2 border-gray-300 rounded-md mr-4 flex-shrink-0 flex items-center justify-center"><svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div><div class="flex-grow"><h4 class="font-bold text-md">${pkg.name}</h4><p class="text-sm text-gray-600 mt-1">${pkg.desc}</p></div><p class="text-lg font-bold text-gray-900 flex-shrink-0 ml-6">$${pkg.price}</p></label></div>`).join('');
-                const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform scale-95 opacity-0"><div class="p-6"><div class="flex justify-between items-start"><div><h2 class="text-3xl font-serif font-bold">${project.title}</h2><p class="text-gray-500">Select the files you wish to purchase</p></div><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div><div id="packages-list" class="mt-8 space-y-3">${packagesHtml}</div></div><div class="p-6 bg-gray-50 border-t sticky bottom-0 rounded-b-2xl"><div class="flex justify-between items-center mb-4"><span class="text-lg font-semibold text-gray-700">Total:</span><span id="total-price" class="text-3xl font-bold text-gray-900">$0</span></div><button id="add-to-cart-btn" class="w-full bg-blue-600 text-white text-lg py-3 rounded-lg hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${projectId}" disabled>Add to Cart</button></div></div>`;
+                const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform scale-95 opacity-0"><div class="p-4 sm:p-6 overflow-y-auto flex-1"><div class="flex justify-between items-start"><div><h2 class="text-2xl sm:text-3xl font-serif font-bold">${project.title}</h2><p class="text-sm sm:text-base text-gray-500">Select the files you wish to purchase</p></div><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none flex-shrink-0 ml-2">&times;</button></div><div id="packages-list" class="mt-6 sm:mt-8 space-y-3">${packagesHtml}</div></div><div class="p-4 sm:p-6 bg-gray-50 border-t sticky flex-shrink-0"><div class="flex justify-between items-center mb-4"><span class="text-base sm:text-lg font-semibold text-gray-700">Total:</span><span id="total-price" class="text-2xl sm:text-3xl font-bold text-gray-900">$0</span></div><button id="add-to-cart-btn" class="w-full bg-blue-600 text-white text-base sm:text-lg py-3 rounded-lg hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${projectId}" disabled>Add to Cart</button></div></div>`;
                 openModal('purchase-modal', content);
             }
             function openChatModal(architectId, context, projectName = null) { const architect = architects.find(a => a.id === architectId); let initialMessage = context === 'commission' ? 'You started a new commission request.' : `You started a customization request for "${projectName}".`; let architectGreeting = context === 'commission' ? 'Hello! Thanks for your interest in a new commission. Please describe your project, and we can discuss the next steps.' : `Hello! I see you're interested in customizing "${projectName}". What changes did you have in mind?`; const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col transform scale-95 opacity-0"><header class="p-4 border-b flex items-center justify-between"><div class="flex items-center gap-3"><img src="${architect.avatar}" class="w-12 h-12 rounded-full"><h3 class="font-bold text-lg">${architect.name}</h3></div><div class="flex items-center gap-4"><button class="start-audio-call-btn text-gray-500 hover:text-gray-800 transition-colors" title="Start Audio Call"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg></button><button class="start-video-call-btn text-gray-500 hover:text-gray-800 transition-colors" title="Start Video Call"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div></header><div id="chat-messages" class="flex-1 p-6 space-y-4 overflow-y-auto"><div class="text-center text-xs text-gray-500">${initialMessage}</div><div class="flex gap-2.5"><img src="${architect.avatar}" class="w-8 h-8 rounded-full"><div class="chat-bubble-architect p-3 rounded-lg max-w-md">${architectGreeting}</div></div></div><footer class="p-4 bg-gray-50 border-t"><form id="chat-form" class="flex items-center gap-3"><textarea id="chat-input" placeholder="Type your message..." class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md p-2 resize-none" rows="1"></textarea><label for="file-upload-chat" class="cursor-pointer text-gray-500 hover:text-gray-700" title="Attach File"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg><input type="file" id="file-upload-chat" class="hidden"></label><button type="submit" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors flex-shrink-0" title="Send Message"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button></form></footer></div>`; openModal('chat-modal', content); }
@@ -762,14 +767,21 @@
                     : `<img src="${item.src}" class="w-full h-full object-cover">`;
                 return `
                     <div class="w-full h-full flex-shrink-0 relative">
-                        ${content}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 p-8 text-white">
-                            <h3 class="text-3xl font-bold font-serif">${item.title}</h3>
-                            <p class="text-lg">${item.architect}</p>
-                            ${item.projectId ? `<button class="view-packages-btn mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors" data-id="${item.projectId}">View Project</button>` : ''}
-                        </div>
+                    ${content}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 w-full p-4 sm:p-6 md:p-8 text-white">
+                        <h3 class="text-base sm:text-xl md:text-3xl font-bold font-serif leading-tight break-words">
+                        ${item.title}
+                        </h3>
+                        <p class="text-xs sm:text-sm md:text-lg mt-1 break-words">
+                        ${item.architect}
+                        </p>
+                        ${item.projectId? `<button class="view-packages-btn mt-2 sm:mt-4 bg-blue-600 text-white px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-xs sm:text-sm md:text-base" data-id="${item.projectId}">
+                            View Project
+                            </button>`: ''}
                     </div>
+                    </div>
+
                 `;
             }).join('');
 
