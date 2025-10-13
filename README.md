@@ -18,7 +18,7 @@ A modern marketplace platform connecting architects with clients, enabling the b
 
 ```
 archivolt/
-├── public                     # static images for the site
+├── images                     # static images for the site
 ├── index.html                 # Landing page with project listings
 ├── login.html                 # Customer login page
 ├── architect_login.html       # Architect/creator login
