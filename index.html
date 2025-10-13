@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivolt - Architectural Design Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1a202c;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1920x1080/1a202c/ffffff?text=Architectural+Detail');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-image {
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .modal-overlay,
+        .filter-overlay,
+        .cart-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-content,
+        #filter-panel,
+        #cart-panel {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #2563eb;
+            transition: width .3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .spec-btn-group button.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .star-rating .star {
+            transition: color 0.2s;
+        }
+
+        .star-rating .star.active,
+        .star-rating:hover .star {
+            color: #f59e0b;
+        }
+
+        .star-rating:hover .star.active~.star {
+            color: #d1d5db;
+            /* gray-300 */
+        }
+
+        /* Chat Styles */
+        .chat-bubble-user {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .chat-bubble-architect {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+        /* Custom Checkbox */
+        .package-checkbox:checked+.checkbox-label {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+
+        .package-checkbox:checked+.checkbox-label .checkbox-custom-box {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .package-checkbox:checked+.checkbox-label .checkbox-custom-box svg {
+            display: block;
+        }
+
+        /* Card Carousel */
+        .slider-container {
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .slider-item {
+            scroll-snap-align: start;
+        }
+
+        .slider-btn {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover .slider-btn,
+        .project-card-profile:hover .slider-btn {
+            opacity: 1;
+        }
+
+        .dots-container .dot.active {
+            background-color: white;
+        }
+
+        /* Showcase Carousel */
+        .showcase-slider {
+            transition: transform 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 antialiased">
+
+    <!-- Header -->
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-serif font-bold text-gray-900">
+                Archivolt
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#designs" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Designs</a>
+                <a href="#architects" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Architects</a>
+                <a href="#how-it-works" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Process</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- <button id="login-btn"
+                    class="text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">Log
+                    In</button> -->
+                <button id="get-started-btn"
+                    class="bg-gray-900 text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-700 transition-colors">Get
+                    Started</button>
+                <button id="cart-btn" class="relative text-gray-600 hover:text-gray-900 ml-2">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    <span id="cart-badge"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-bg text-white">
+            <div class="container mx-auto px-6 py-28 md:py-40 text-center">
+                <h1 class="text-5xl md:text-7xl font-serif font-bold leading-tight mb-4">Visionary Design, Realized.
+                </h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-3xl mx-auto font-light">The marketplace for
+                    exceptional architectural plans. Ready to build, customize, or inspire.</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#designs"
+                        class="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-lg shadow-lg">Explore
+                        a World of Design</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Showcase Section -->
+        <section id="showcase" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-14 max-w-2xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold">Featured Showcase</h2>
+                    <p class="text-gray-600 mt-4 text-lg">Explore best-selling projects and stunning visualizations from
+                        our top creators.</p>
+                </div>
+                <div id="showcase-carousel"
+                    class="relative w-full max-w-5xl mx-auto overflow-hidden rounded-2xl shadow-2xl group"
+                    style="aspect-ratio: 16 / 9;">
+                    <div id="showcase-slider" class="showcase-slider flex h-full">
+                        <!-- Slides will be injected here -->
+                    </div>
+                    <button id="showcase-prev"
+                        class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 p-2 rounded-full text-gray-800 hover:bg-white focus:outline-none opacity-0 group-hover:opacity-100 transition-opacity"><svg
+                            class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg></button>
+                    <button id="showcase-next"
+                        class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 p-2 rounded-full text-gray-800 hover:bg-white focus:outline-none opacity-0 group-hover:opacity-100 transition-opacity"><svg
+                            class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Designs Section -->
+        <section id="designs" class="py-20 md:py-28 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-14 max-w-2xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold">Curated Projects</h2>
+                    <p class="text-gray-600 mt-4 text-lg">Discover unique designs from a global community of architects,
+                        available for instant purchase.</p>
+                </div>
+
+                <div class="flex justify-between items-center mb-8">
+                    <p id="results-counter" class="text-gray-600 font-medium">Showing all projects</p>
+                    <button id="open-filter-btn"
+                        class="flex items-center gap-2 bg-white border border-gray-300 px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L12 14.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 016 17v-2.586L3.293 6.707A1 1 0 013 6V4z">
+                            </path>
+                        </svg>
+                        Filter & Sort
+                    </button>
+                </div>
+
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <!-- Project cards will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Architects Section -->
+        <section id="architects" class="py-20 md:py-28">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-14 max-w-2xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold">Meet the Visionaries</h2>
+                    <p class="text-gray-600 mt-4 text-lg">Explore the creators behind the designs. Click to view their
+                        full portfolio and commission new work.</p>
+                </div>
+                <div id="architects-grid"
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-10 text-center">
+                    <!-- Architect profiles will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-20 md:py-28 bg-gray-900 text-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-14 max-w-2xl mx-auto">
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold">A Blueprint for Success</h2>
+                    <p class="text-gray-400 mt-4 text-lg">Whether you're buying a plan or selling your work, our process
+                        is designed for clarity and collaboration.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-10 items-start">
+                    <!-- For Clients -->
+                    <div class="bg-gray-800 p-8 rounded-xl fade-in-up">
+                        <h3 class="text-3xl font-serif font-bold mb-6 text-center">For Clients</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    1</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Discover & Connect</h4>
+                                    <p class="text-gray-400">Select the exact files you need, request project-specific
+                                        customizations, or commission entirely new work.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    2</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Collaborate Securely</h4>
+                                    <p class="text-gray-400">Use our on-platform chat, voice, or video calls to discuss
+                                        terms, agree on pricing, and share files.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    3</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Build Your Dream</h4>
+                                    <p class="text-gray-400">Pay securely and receive your architectural files
+                                        instantly, ready for construction.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- For Architects -->
+                    <div class="bg-gray-800 p-8 rounded-xl fade-in-up">
+                        <h3 class="text-3xl font-serif font-bold mb-6 text-center">For Architects</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-white text-gray-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    1</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Monetize Your Archive</h4>
+                                    <p class="text-gray-400">Package and sell your past projects as individual files or
+                                        bundles, giving you full pricing control.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-white text-gray-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    2</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Attract New Clients</h4>
+                                    <p class="text-gray-400">Gain global exposure and accept paid commissions for
+                                        customizations and new projects via direct chat.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="flex-shrink-0 bg-white text-gray-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">
+                                    3</div>
+                                <div>
+                                    <h4 class="font-semibold text-xl">Focus on Design</h4>
+                                    <p class="text-gray-400">We handle secure payments, client communication, and file
+                                        delivery so you can focus on your craft.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="for-architects" class="py-20 md:py-28 bg-blue-600 text-white">
+            <div class="container mx-auto px-6 text-center max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-serif font-bold">Join the Future of Architecture.</h2>
+                <p class="text-lg text-blue-200 mt-4 mb-8">Create your professional portfolio, reach a global clientele,
+                    and build a new revenue stream from your existing body of work.</p>
+                <a href="architect_login.html"
+                    class="bg-white text-blue-600 px-10 py-4 rounded-lg font-bold hover:bg-gray-200 transition-colors text-lg shadow-lg">Become
+                    a Creator on Archivolt</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="container mx-auto px-6 py-12 text-center text-gray-400">
+            <p>&copy; 2025 Archivolt. All Rights Reserved.</p>
+            <p class="text-sm mt-2">A new paradigm for architectural design.</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast"
+        class="fixed bottom-10 right-10 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-xl translate-x-[120%] transform transition-transform duration-500 ease-in-out z-[70]">
+        <!-- Message will be set by JS -->
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container"></div>
+
+    <!-- Filter Panel -->
+    <div id="filter-overlay" class="filter-overlay fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0"></div>
+    <div id="filter-panel"
+        class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b">
+                <h3 class="text-2xl font-serif font-bold">Filter & Sort</h3>
+                <button id="close-filter-btn" class="text-gray-400 hover:text-gray-700 text-3xl">&times;</button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Price Filter -->
+                <div>
+                    <label for="price-range" class="block font-semibold mb-2 text-gray-800">Price Range</label>
+                    <div class="flex justify-between text-sm text-gray-600 mb-1"><span>$0</span><span
+                            id="price-value">$5000</span></div>
+                    <input type="range" id="price-range" min="0" max="5000" value="5000"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <!-- Land Size Filter -->
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-800">Min. Land Size (ft)</label>
+                    <div class="flex gap-4">
+                        <input type="number" id="land-front" placeholder="Front"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md p-2">
+                        <input type="number" id="land-depth" placeholder="Depth"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md p-2">
+                    </div>
+                </div>
+                <!-- Project Rating Filter -->
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-800">Min. Project Rating</label>
+                    <div id="project-star-rating-filter"
+                        class="star-rating flex items-center gap-1 text-gray-300 text-3xl cursor-pointer">
+                        <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span
+                            class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span
+                            class="star" data-value="5">★</span>
+                    </div>
+                </div>
+                <!-- Architect Rating Filter -->
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-800">Min. Architect Rating</label>
+                    <div id="architect-star-rating-filter"
+                        class="star-rating flex items-center gap-1 text-gray-300 text-3xl cursor-pointer">
+                        <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span
+                            class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span
+                            class="star" data-value="5">★</span>
+                    </div>
+                </div>
+                <!-- Bedrooms Filter -->
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-800">Bedrooms</label>
+                    <div class="spec-btn-group flex flex-wrap gap-2" id="bedrooms-filter">
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="1">1</button>
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="2">2</button>
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="3">3</button>
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="4">4+</button>
+                    </div>
+                </div>
+                <!-- Floors Filter -->
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-800">Floors</label>
+                    <div class="spec-btn-group flex flex-wrap gap-2" id="floors-filter">
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="1">1</button>
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="2">2</button>
+                        <button class="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100 transition"
+                            data-value="3">3+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 bg-gray-50 border-t sticky bottom-0">
+            <button id="clear-filters-btn"
+                class="w-full bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">Clear
+                All Filters</button>
+        </div>
+    </div>
+
+    <!-- Cart Panel -->
+    <div id="cart-overlay" class="cart-overlay fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0"></div>
+    <div id="cart-panel"
+        class="fixed top-0 right-0 h-full w-full max-w-lg bg-white shadow-2xl z-50 transform translate-x-full flex flex-col">
+        <!-- Cart content will be injected by JS -->
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const architects = [
+                { id: 1, name: 'Studio MK27', bio: 'A leading Brazilian firm founded by Marcio Kogan, known for its sustainable and modern designs.', followers: 12500, avatar: 'https://placehold.co/128x128/1a202c/ffffff?text=MK', social: { instagram: '#', linkedin: '#', website: '#' }, rating: 4.9 },
+                { id: 2, name: 'Skidmore, Owings & Merrill', bio: 'An American architectural giant, responsible for some of the world\'s most iconic skyscrapers.', followers: 89000, avatar: 'https://placehold.co/128x128/4a5568/ffffff?text=SOM', social: { linkedin: '#', website: '#' }, rating: 4.8 },
+                { id: 3, name: 'Robert A.M. Stern', bio: 'Celebrated for his modern traditionalist style, blending classic forms with contemporary living.', followers: 8200, avatar: 'https://placehold.co/128x128/718096/ffffff?text=RS', social: { website: '#' }, rating: 4.7 },
+                { id: 4, name: 'John Pawson', bio: 'A British architectural designer whose work is known for its minimalist aesthetic.', followers: 22000, avatar: 'https://placehold.co/128x128/a0aec0/1a202c?text=JP', social: { instagram: '#', website: '#' }, rating: 5.0 },
+                { id: 5, name: 'Heatherwick Studio', bio: 'A British design and architecture studio known for its innovative and unconventional projects.', followers: 45000, avatar: 'https://placehold.co/128x128/cbd5e0/1a202c?text=HS', social: { instagram: '#', linkedin: '#', website: '#' }, rating: 4.6 },
+                { id: 6, name: 'Historical Concepts', bio: 'Specializing in traditional architecture and place-making, creating timeless homes and communities.', followers: 5600, avatar: 'https://placehold.co/128x128/48bb78/ffffff?text=HC', social: { instagram: '#', facebook: '#', website: '#' }, rating: 4.9 }
+            ];
+
+            let projects = [
+                { id: 1, architectId: 1, title: 'Modern Lakeside Villa', images: ["../public/lakeside_villa.jpg", '../public/living_room.jpg', '../public/kitchen_villa.jpg', '../public/bedroom.jpg'], specs: { area: '3,200 sqft', beds: 4, baths: 3 }, has3DPreview: true, customizable: true, downloads: 215, rating: 4.8, reviews: 125, price: 299, landSize: { front: 60, depth: 110 }, floors: 2, packages: [{ name: 'Elevation Files', desc: 'Detailed exterior elevation drawings and 3D views.', price: 299 }, { name: 'Complete Civil Plan', desc: 'Full structural and civil engineering blueprints.', price: 799 }, { name: 'Interior Design Pack', desc: 'All interior layouts, material specs, and furnishing plans.', price: 499 }, { name: 'Electrical & Plumbing', desc: 'Complete MEP drawings for all utilities.', price: 250 }] },
+                { id: 2, architectId: 2, title: 'Downtown Corporate Tower', images: ['../public/day.jpg', '../public/night.jpg', '../public/lobby.jpg', '../public/detail_corporate.jpg'], specs: { area: '120,000 sqft' }, has3DPreview: true, customizable: false, downloads: 88, rating: 4.5, reviews: 45, price: 999, landSize: { front: 200, depth: 300 }, floors: 25, packages: [{ name: 'Facade Elevation', desc: 'Exterior curtain wall details and drawings.', price: 999 }, { name: 'Core & Shell Plan', desc: 'Primary structural and MEP backbone plans.', price: 4999 }] },
+                { id: 3, architectId: 3, title: 'Classic English Manor', images:  ['../public/front.jpg','../public/garden.jpg','../public/hall.jpg','../public/library.jpg'], specs: { area: '5,500 sqft', beds: 6, baths: 5 }, has3DPreview: false, customizable: true, downloads: 432, rating: 4.9, reviews: 210, price: 350, landSize: { front: 100, depth: 150 }, floors: 3, packages: [{ name: 'Basic Floor Plan', desc: '2D floor plans only.', price: 350 }, { name: 'Full Construction Set', desc: 'All civil, structural, and elevation drawings.', price: 1499 }, { name: 'Interior Lookbook', desc: 'A guide to the interior design style and color palette.', price: 450 }] },
+                { id: 4, architectId: 4, title: 'Minimalist Urban Loft', images:  ['../public/main_space.jpg','../public/kitchnette.jpg','../public/view.jpg', 'https://placehold.co/600x400/f7fafc/1a202c?text=Details'], specs: { area: '1,800 sqft', beds: 2, baths: 2 }, has3DPreview: true, customizable: true, downloads: 604, rating: 4.6, reviews: 302, price: 199, landSize: { front: 40, depth: 80 }, floors: 1, packages: [{ name: 'Basic Plan', desc: 'Floor plans and one exterior elevation.', price: 199 }, { name: 'Full Permit Set', desc: 'All drawings required for a building permit.', price: 799 }] },
+                { id: 5, architectId: 5, title: 'Boutique Retail Space', images:  ['../public/storefront.jpg','../public/interior.jpg', 'https://placehold.co/600x400/e2e8f0/1a202c?text=Display','../public/layout.jpg'], specs: { area: '8,000 sqft' }, has3DPreview: false, customizable: false, downloads: 120, rating: 4.7, reviews: 88, price: 2499, landSize: { front: 80, depth: 120 }, floors: 2, packages: [{ name: 'Full Commercial Plan', desc: 'Complete set of drawings for commercial build-out.', price: 2499 }] },
+                { id: 6, architectId: 6, title: 'Cozy Country Farmhouse', images: ['../public/farmhouse.jpg','../public/porch.jpg','../public/kitchen.jpg','../public/hearth.jpg'], specs: { area: '2,800 sqft', beds: 3, baths: 2.5 }, has3DPreview: false, customizable: true, downloads: 980, rating: 5.0, reviews: 450, price: 249, landSize: { front: 75, depth: 130 }, floors: 2, packages: [{ name: 'Elevation Files', desc: 'Detailed exterior elevation drawings.', price: 249 }, { name: 'Civil Plan', desc: 'Full structural and civil engineering blueprints.', price: 899 }, { name: 'Interior Design Pack', desc: 'All interior layouts, material specs, etc.', price: 499 },] },
+            ];
+
+            projects = projects.map(p => ({ ...p, architectRating: architects.find(a => a.id === p.architectId)?.rating || 0 }));
+            let cart = [];
+            let activeFilters = { price: 5000, front: null, depth: null, projectRating: null, architectRating: null, bedrooms: null, floors: null };
+
+            const projectsGrid = document.getElementById('projects-grid');
+            const architectsGrid = document.getElementById('architects-grid');
+            const toast = document.getElementById('toast');
+            const modalContainer = document.getElementById('modal-container');
+            const filterPanel = document.getElementById('filter-panel');
+            const filterOverlay = document.getElementById('filter-overlay');
+            const cartPanel = document.getElementById('cart-panel');
+            const cartOverlay = document.getElementById('cart-overlay');
+            const cartBadge = document.getElementById('cart-badge');
+            const resultsCounter = document.getElementById('results-counter');
+
+            function renderProjects() {
+                projectsGrid.innerHTML = '';
+                const filteredProjects = projects.filter(p => {
+                    if (p.price > activeFilters.price) return false;
+                    if (activeFilters.front && p.landSize.front < activeFilters.front) return false;
+                    if (activeFilters.depth && p.landSize.depth < activeFilters.depth) return false;
+                    if (activeFilters.projectRating && p.rating < activeFilters.projectRating) return false;
+                    if (activeFilters.architectRating && p.architectRating < activeFilters.architectRating) return false;
+                    if (activeFilters.bedrooms) {
+                        if (activeFilters.bedrooms < 4 && p.specs.beds != activeFilters.bedrooms) return false;
+                        if (activeFilters.bedrooms >= 4 && p.specs.beds < 4) return false;
+                    }
+                    if (activeFilters.floors) {
+                        if (activeFilters.floors < 3 && p.floors != activeFilters.floors) return false;
+                        if (activeFilters.floors >= 3 && p.floors < 3) return false;
+                    }
+                    return true;
+                });
+
+                if (filteredProjects.length === 0) {
+                    projectsGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 text-lg">No projects match the current filters.</p>`;
+                } else {
+                    filteredProjects.forEach(project => {
+                        const architect = architects.find(a => a.id === project.architectId);
+                        const imageSlides = project.images.map(img => `<div class="slider-item w-full h-full flex-shrink-0"><img src="${img}" class="card-image w-full h-full" alt="${project.title}"></div>`).join('');
+                        const dots = project.images.map((_, i) => `<button class="dot w-2 h-2 rounded-full bg-white/50 transition" data-slide="${i}"></button>`).join('');
+
+                        const card = document.createElement('div');
+                        card.className = 'project-card flex flex-col bg-white rounded-xl shadow-md overflow-hidden group fade-in-up';
+                        card.dataset.id = project.id;
+                        card.innerHTML = `
+                            <div class="relative">
+                                <div class="slider-container flex overflow-x-scroll scroll-smooth snap-x snap-mandatory rounded-t-xl">${imageSlides}</div>
+                                <button class="slider-btn prev absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 p-1 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                                <button class="slider-btn next absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 p-1 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                                <div class="dots-container absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">${dots}</div>
+                                <div class="absolute top-3 right-3 flex items-center gap-2">
+                                    <button class="share-btn bg-black/30 p-2 rounded-full text-white hover:bg-black/50 transition-colors" data-title="${project.title}" data-url="https://archivolt.com/project/${project.id}"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6.002l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.366a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg></button>
+                                    <button class="wishlist-btn bg-black/30 p-2 rounded-full text-white hover:bg-black/50 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 20.273l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg></button>
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-col flex-1">
+                                <a href="#" class="architect-link text-sm text-blue-600 hover:underline font-medium" data-id="${architect.id}">${architect.name}</a>
+                                <h3 class="text-xl font-bold mt-1 text-gray-900">${project.title}</h3>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                    <span class="font-bold text-gray-800 ml-1">${project.rating.toFixed(1)}</span>
+                                    <span class="ml-2">(${project.reviews} reviews)</span>
+                                </div>
+                                <div class="text-sm text-gray-600 space-x-3 border-t pt-3 mt-3">
+                                    <span>${project.specs.area}</span><span>•</span><span>${project.specs.beds} Beds</span><span>•</span><span>${project.specs.baths} Baths</span>
+                                </div>
+                                <div class="mt-auto border-t pt-4 mt-4 space-y-3">
+                                    <button class="view-packages-btn w-full bg-gray-900 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex justify-between items-center" data-id="${project.id}">
+                                        <span>View Packages</span><span class="text-sm font-normal">From $${project.price}</span>
+                                    </button>
+                                    ${project.customizable ? `<button class="customize-project-btn w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors" data-architect-id="${project.architectId}" data-project-title="${project.title}">Customize This Plan</button>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        projectsGrid.appendChild(card);
+                    });
+                }
+                setupCardCarousels(projectsGrid);
+                resultsCounter.textContent = `Showing ${filteredProjects.length} of ${projects.length} projects`;
+                observeFadeInElements();
+            }
+
+            function setupCardCarousels(container) {
+                container.querySelectorAll('.project-card, .project-card-profile').forEach(card => {
+                    const slider = card.querySelector('.slider-container');
+                    const prevBtn = card.querySelector('.prev');
+                    const nextBtn = card.querySelector('.next');
+                    const dots = card.querySelectorAll('.dot');
+
+                    if (!slider || !prevBtn || !nextBtn || !dots.length) return;
+
+                    function updateDots(index) {
+                        dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    }
+
+                    slider.addEventListener('scroll', () => {
+                        const slideWidth = slider.clientWidth;
+                        const currentIndex = Math.round(slider.scrollLeft / slideWidth);
+                        updateDots(currentIndex);
+                    });
+
+                    prevBtn.addEventListener('click', () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' }));
+                    nextBtn.addEventListener('click', () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' }));
+
+                    dots.forEach(dot => {
+                        dot.addEventListener('click', () => {
+                            const slideIndex = parseInt(dot.dataset.slide);
+                            slider.scrollTo({ left: slideIndex * slider.clientWidth, behavior: 'smooth' });
+                        });
+                    });
+                    updateDots(0);
+                });
+            }
+
+            function renderArchitects() { architectsGrid.innerHTML = ''; architects.forEach(architect => { const profile = document.createElement('div'); profile.className = 'fade-in-up'; profile.innerHTML = ` <a href="#" class="architect-link group" data-id="${architect.id}"> <div class="relative"> <img src="${architect.avatar}" alt="${architect.name}" class="w-28 h-28 rounded-full mx-auto mb-3 shadow-lg group-hover:shadow-xl transition-shadow"> <div class="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-blue-500 transition-all"></div> </div> <h4 class="font-bold text-gray-800 text-lg">${architect.name}</h4> <p class="text-sm text-gray-500">${(architect.followers / 1000).toFixed(1)}k Followers</p> </a>`; architectsGrid.appendChild(profile); }); observeFadeInElements(); }
+            function addToCart(projectId, selectedPackages) { const project = projects.find(p => p.id === projectId); if (!project) return; selectedPackages.forEach(pkg => { cart.push({ projectId: project.id, projectTitle: project.title, image: project.images[0], architectName: architects.find(a => a.id === project.architectId).name, packageName: pkg.name, price: pkg.price }); }); updateCart(); showToast(`${selectedPackages.length} item(s) added to cart!`, 'success'); closeModal('purchase-modal'); }
+            function removeFromCart(index) { cart.splice(index, 1); updateCart(); }
+            function updateCart() { renderCart(); updateCartBadge(); }
+            function updateCartBadge() { if (cart.length > 0) { cartBadge.textContent = cart.length; cartBadge.classList.remove('hidden'); } else { cartBadge.classList.add('hidden'); } }
+            function renderCart() {
+                let cartContent = ''; let subtotal = 0; if (cart.length === 0) { cartContent = `<div class="flex-1 flex flex-col items-center justify-center text-center p-6"><svg class="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><h3 class="mt-4 text-2xl font-serif font-bold">Your cart is empty</h3><p class="text-gray-500 mt-2">Find a design you love and add it to your cart.</p></div>`; } else { const itemsHtml = cart.map((item, index) => { subtotal += item.price; return ` <div class="flex items-start gap-4 py-4"> <img src="${item.image}" alt="${item.projectTitle}" class="w-24 h-20 object-cover rounded-md flex-shrink-0"> <div class="flex-1"> <h4 class="font-bold">${item.projectTitle}</h4> <p class="text-sm text-gray-500">${item.architectName}</p> <p class="text-sm text-gray-700 mt-1">${item.packageName}</p> </div> <div class="text-right"> <p class="font-bold text-lg">$${item.price}</p> <button class="remove-from-cart-btn text-xs text-red-500 hover:underline mt-1" data-index="${index}">Remove</button> </div> </div> `; }).join('<hr class="border-gray-200">'); cartContent = `<div class="flex-1 overflow-y-auto p-6">${itemsHtml}</div>`; }
+                cartPanel.innerHTML = ` <header class="p-6 border-b flex items-center justify-between"> <h2 class="text-2xl font-serif font-bold">Your Cart</h2> <button id="close-cart-btn" class="text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button> </header> ${cartContent} ${cart.length > 0 ? ` <footer class="p-6 bg-gray-50 border-t"> <div class="flex justify-between items-center mb-4"> <span class="text-lg font-semibold text-gray-700">Subtotal:</span> <span class="text-3xl font-bold text-gray-900">$${subtotal.toFixed(2)}</span> </div> <a href="checkout.html"><button class="w-full bg-blue-600 text-white text-lg py-3 rounded-lg hover:bg-blue-700 font-bold">Proceed to Checkout</button></a>  </footer>` : ''} `;
+            }
+            function openModal(modalId, content, options = {}) { const modal = document.createElement('div'); modal.id = modalId; const zIndex = modalId === 'profile-modal' ? 'z-50' : 'z-[60]'; modal.className = `modal-overlay fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden opacity-0 ${zIndex} ${options.customClass || ''}`; modal.innerHTML = content; modalContainer.appendChild(modal); setTimeout(() => { modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('.modal-content').classList.remove('opacity-0', 'scale-95'); }, 10); }, 10); modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('.close-modal-btn')) closeModal(modalId); }); }
+            function closeModal(modalId) { const modal = document.getElementById(modalId); if (!modal) return; modal.classList.add('opacity-0'); modal.querySelector('.modal-content').classList.add('opacity-0', 'scale-95'); setTimeout(() => modal.remove(), 300); }
+            function togglePanel(type, show) { const overlay = type === 'filter' ? filterOverlay : cartOverlay; const panel = type === 'filter' ? filterPanel : cartPanel; if (show) { overlay.classList.remove('hidden'); setTimeout(() => { overlay.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10); } else { overlay.classList.add('opacity-0'); panel.classList.add('translate-x-full'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
+            function openProfileModal(architectId) {
+                const architect = architects.find(a => a.id === architectId);
+                const architectProjects = projects.filter(p => p.architectId === architectId);
+                const totalDownloads = architectProjects.reduce((sum, p) => sum + p.downloads, 0);
+
+                let projectsGridHtml = architectProjects.map(p => {
+                    const imageSlides = p.images.map(img => `<div class="slider-item w-full h-full flex-shrink-0"><img src="${img}" class="w-full h-32 object-cover" alt="${p.title}"></div>`).join('');
+                    const dots = p.images.map((_, i) => `<button class="dot w-1.5 h-1.5 rounded-full bg-white/50 transition" data-slide="${i}"></button>`).join('');
+
+                    return `
+                    <div class="project-card-profile flex flex-col bg-white rounded-lg shadow-md overflow-hidden group" data-id="${p.id}">
+                        <div class="relative">
+                            <div class="slider-container flex overflow-x-scroll scroll-smooth snap-x snap-mandatory">${imageSlides}</div>
+                            <button class="slider-btn prev absolute top-1/2 left-1 -translate-y-1/2 bg-white/80 p-0.5 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <button class="slider-btn next absolute top-1/2 right-1 -translate-y-1/2 bg-white/80 p-0.5 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                            <div class="dots-container absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">${dots}</div>
+                             <div class="absolute top-2 right-2 flex items-center gap-1">
+                                <button class="share-btn bg-black/30 p-1.5 rounded-full text-white hover:bg-black/50 transition-colors" data-title="${p.title}" data-url="https://archivolt.com/project/${p.id}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6.002l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.366a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
+                                </button>
+                                <button class="wishlist-btn bg-black/30 p-1.5 rounded-full text-white hover:bg-black/50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 20.273l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3 flex flex-col flex-1">
+                            <h4 class="font-bold text-sm text-gray-800 leading-tight">${p.title}</h4>
+                            <div class="flex items-center text-xs text-gray-500 mt-1">
+                                <svg class="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                <span class="font-bold text-gray-800 ml-1">${p.rating.toFixed(1)}</span>
+                                <span class="ml-1.5">(${p.reviews})</span>
+                            </div>
+                            <div class="mt-auto space-y-2 pt-2 border-t mt-2">
+                                <button class="view-packages-btn-profile text-xs w-full bg-gray-900 text-white px-3 py-2 rounded-md font-semibold hover:bg-gray-700 transition-colors" data-id="${p.id}">View Packages</button>
+                                ${p.customizable ? `<button class="customize-project-btn-profile text-xs w-full bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors" data-architect-id="${p.architectId}" data-project-title="${p.title}">Customize</button>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                let socialLinksHtml = '';
+                if (architect.social) { socialLinksHtml = `<div class="mt-4 flex justify-center md:justify-start items-center gap-5">${architect.social.instagram ? `<a href="${architect.social.instagram}" target="_blank" class="text-gray-400 hover:text-gray-600 transition-colors" title="Instagram"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>` : ''}${architect.social.facebook ? `<a href="${architect.social.facebook}" target="_blank" class="text-gray-400 hover:text-gray-600 transition-colors" title="Facebook"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>` : ''}${architect.social.linkedin ? `<a href="${architect.social.linkedin}" target="_blank" class="text-gray-400 hover:text-gray-600 transition-colors" title="LinkedIn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>` : ''}${architect.social.website ? `<a href="${architect.social.website}" target="_blank" class="text-gray-400 hover:text-gray-600 transition-colors" title="Website"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></a>` : ''}</div>`; }
+                const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0"><div class="p-6 md:p-8"><div class="flex justify-end"><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div><header class="flex flex-col md:flex-row items-center gap-8 -mt-8"><img src="${architect.avatar}" alt="${architect.name}" class="w-36 h-36 rounded-full shadow-xl border-4 border-white flex-shrink-0"><div class="w-full text-center md:text-left"><h2 class="text-4xl font-serif font-bold">${architect.name}</h2><div class="flex items-center gap-2 justify-center md:justify-start mt-2"><div class="flex items-center text-yellow-500 text-xl">${'★'.repeat(Math.round(architect.rating))}${'☆'.repeat(5 - Math.round(architect.rating))}</div><span class="text-gray-600 font-bold">${architect.rating.toFixed(1)}</span></div><div class="flex flex-wrap justify-center md:justify-start items-center gap-6 mt-4"><div class="text-center"><p class="text-xl font-bold">${architectProjects.length}</p><p class="text-sm text-gray-500 uppercase tracking-wider">Projects</p></div><div class="text-center"><p class="text-xl font-bold">${(architect.followers / 1000).toFixed(1)}k</p><p class="text-sm text-gray-500 uppercase tracking-wider">Followers</p></div><div class="text-center"><p class="text-xl font-bold">${(totalDownloads / 1000).toFixed(1)}k</p><p class="text-sm text-gray-500 uppercase tracking-wider">Downloads</p></div></div><div class="mt-4 flex flex-wrap justify-center md:justify-start gap-3"><button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">Follow</button><button class="share-architect-btn bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors" data-name="${architect.name}" data-url="https://archivolt.com/architect/${architect.id}">Share Profile</button><button class="commission-project-btn bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-700 transition" data-id="${architect.id}">Commission New Project</button></div></div></header><div class="mt-6 pt-4 border-t border-gray-200 text-center md:text-left"><p class="text-gray-600 text-md">${architect.bio}</p>${socialLinksHtml}</div></div><main class="bg-gray-50 p-6 md:p-8 border-t"><h3 class="text-center text-sm font-bold uppercase tracking-widest text-gray-500 mb-6">Portfolio</h3><div id="profile-projects-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${projectsGridHtml || '<p class="col-span-full text-center text-gray-500">No projects yet.</p>'}</div></main></div>`;
+                openModal('profile-modal', content);
+                setupCardCarousels(document.getElementById('profile-projects-grid'));
+            }
+
+            function openPurchaseModal(projectId) {
+                const project = projects.find(p => p.id === projectId);
+                if (!project) return;
+                let packagesHtml = project.packages.map((pkg, index) => `<div><input type="checkbox" id="pkg-${project.id}-${index}" class="package-checkbox hidden" data-price="${pkg.price}" data-name="${pkg.name}"><label for="pkg-${project.id}-${index}" class="checkbox-label border rounded-lg p-4 flex items-center cursor-pointer hover:border-blue-500 transition-all"><div class="checkbox-custom-box w-6 h-6 border-2 border-gray-300 rounded-md mr-4 flex-shrink-0 flex items-center justify-center"><svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div><div class="flex-grow"><h4 class="font-bold text-md">${pkg.name}</h4><p class="text-sm text-gray-600 mt-1">${pkg.desc}</p></div><p class="text-lg font-bold text-gray-900 flex-shrink-0 ml-6">$${pkg.price}</p></label></div>`).join('');
+                const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform scale-95 opacity-0"><div class="p-6"><div class="flex justify-between items-start"><div><h2 class="text-3xl font-serif font-bold">${project.title}</h2><p class="text-gray-500">Select the files you wish to purchase</p></div><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div><div id="packages-list" class="mt-8 space-y-3">${packagesHtml}</div></div><div class="p-6 bg-gray-50 border-t sticky bottom-0 rounded-b-2xl"><div class="flex justify-between items-center mb-4"><span class="text-lg font-semibold text-gray-700">Total:</span><span id="total-price" class="text-3xl font-bold text-gray-900">$0</span></div><button id="add-to-cart-btn" class="w-full bg-blue-600 text-white text-lg py-3 rounded-lg hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${projectId}" disabled>Add to Cart</button></div></div>`;
+                openModal('purchase-modal', content);
+            }
+            function openChatModal(architectId, context, projectName = null) { const architect = architects.find(a => a.id === architectId); let initialMessage = context === 'commission' ? 'You started a new commission request.' : `You started a customization request for "${projectName}".`; let architectGreeting = context === 'commission' ? 'Hello! Thanks for your interest in a new commission. Please describe your project, and we can discuss the next steps.' : `Hello! I see you're interested in customizing "${projectName}". What changes did you have in mind?`; const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col transform scale-95 opacity-0"><header class="p-4 border-b flex items-center justify-between"><div class="flex items-center gap-3"><img src="${architect.avatar}" class="w-12 h-12 rounded-full"><h3 class="font-bold text-lg">${architect.name}</h3></div><div class="flex items-center gap-4"><button class="start-audio-call-btn text-gray-500 hover:text-gray-800 transition-colors" title="Start Audio Call"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg></button><button class="start-video-call-btn text-gray-500 hover:text-gray-800 transition-colors" title="Start Video Call"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div></header><div id="chat-messages" class="flex-1 p-6 space-y-4 overflow-y-auto"><div class="text-center text-xs text-gray-500">${initialMessage}</div><div class="flex gap-2.5"><img src="${architect.avatar}" class="w-8 h-8 rounded-full"><div class="chat-bubble-architect p-3 rounded-lg max-w-md">${architectGreeting}</div></div></div><footer class="p-4 bg-gray-50 border-t"><form id="chat-form" class="flex items-center gap-3"><textarea id="chat-input" placeholder="Type your message..." class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-md p-2 resize-none" rows="1"></textarea><label for="file-upload-chat" class="cursor-pointer text-gray-500 hover:text-gray-700" title="Attach File"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg><input type="file" id="file-upload-chat" class="hidden"></label><button type="submit" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors flex-shrink-0" title="Send Message"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button></form></footer></div>`; openModal('chat-modal', content); }
+            function openShareModal(title, url) { const encodedUrl = encodeURIComponent(url); const encodedTitle = encodeURIComponent(title); const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md transform scale-95 opacity-0"><div class="p-6"><div class="flex justify-between items-start"><div><h3 class="text-2xl font-serif font-bold">Share this</h3><p class="text-gray-500">Copy the link or share to social media.</p></div><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div><div class="mt-6"><label for="share-url" class="sr-only">Share URL</label><div class="flex rounded-md shadow-sm"><input type="text" id="share-url" value="${url}" readonly class="flex-1 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300 bg-gray-100 p-2"><button id="copy-link-btn" class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 bg-gray-50 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-r-md">Copy</button></div></div><div class="mt-6 flex justify-center gap-4">${socialShareLink(`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`, 'Twitter', '<svg viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733a4.67 4.67 0 0 0 2.048-2.578 9.3 9.3 0 0 1-2.958 1.13 4.66 4.66 0 0 0-7.938 4.25 13.229 13.229 0 0 1-9.602-4.868c-.333.57-.523 1.234-.523 1.921a4.658 4.658 0 0 0 2.071 3.878 4.644 4.644 0 0 1-2.11-.583v.06a4.659 4.659 0 0 0 3.737 4.568 4.692 4.692 0 0 1-2.104.08 4.658 4.658 0 0 0 4.352 3.234 9.348 9.348 0 0 1-5.786 1.995c-.376 0-.747-.022-1.112-.065a13.175 13.175 0 0 0 7.14 2.093c8.57 0 13.255-7.098 13.255-13.254 0-.202-.005-.403-.014-.602a9.455 9.455 0 0 0 2.323-2.41z"></path></svg>')}${socialShareLink(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, 'Facebook', '<svg viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg>')}${socialShareLink(`https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`, 'LinkedIn', '<svg viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>')}</div></div></div>`; openModal('share-modal', content); }
+            function socialShareLink(url, name, svg) { return `<a href="${url}" target="_blank" class="text-gray-500 hover:text-gray-800 transition-colors" title="Share on ${name}">${svg}</a>`; }
+            function openLoginTypeModal() { const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-sm transform scale-95 opacity-0"><div class="p-8 text-center"><h2 class="text-2xl font-bold font-serif mb-4">Join As</h2><div class="space-y-4"><a href="login.html" class="block w-full text-center py-3 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-semibold">User</a><a href="architect_login.html" class="block w-full text-center py-3 px-4 rounded-lg text-white bg-gray-800 hover:bg-gray-700 font-semibold">Architect / Creator</a></div><button class="close-modal-btn absolute top-3 right-3 text-gray-400 hover:text-gray-600">&times;</button></div></div>`; openModal('login-type-modal', content); }
+            function openUnifiedLoginModal() { const content = `<div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md transform scale-95 opacity-0"><div class="p-8"><div class="text-center"><h2 class="text-3xl font-bold text-gray-800">Sign In</h2><p class="text-gray-500 mt-2">Access your Archivolt account.</p></div><form class="mt-8 space-y-6"><div><label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label><input id="login-email" type="email" required class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><label for="login-password" class="block text-sm font-medium text-gray-700">Password</label><input id="login-password" type="password" required class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></div><div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-700">Sign in</button></div></form><p class="mt-6 text-center text-sm text-gray-600">Don't have an account? <button id="switch-to-signup" class="font-medium text-blue-600 hover:text-blue-500">Get Started</button></p></div></div>`; openModal('login-modal', content); }
+
+            function showToast(message = 'Project added to cart!', type = 'info') { toast.textContent = message; toast.classList.remove('bg-gray-900', 'bg-green-600'); toast.classList.add(type === 'success' ? 'bg-green-600' : 'bg-gray-900'); toast.classList.remove('translate-x-[120%]'); setTimeout(() => toast.classList.add('translate-x-[120%]'), 3000); }
+            function observeFadeInElements() { const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 }); document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el)); }
+            renderProjects(); renderArchitects(); renderCart();
+            document.getElementById('open-filter-btn').addEventListener('click', () => togglePanel('filter', true)); document.getElementById('close-filter-btn').addEventListener('click', () => togglePanel('filter', false)); filterOverlay.addEventListener('click', () => togglePanel('filter', false)); document.getElementById('cart-btn').addEventListener('click', () => togglePanel('cart', true)); cartPanel.addEventListener('click', e => { if (e.target.matches('#close-cart-btn')) togglePanel('cart', false) }); cartOverlay.addEventListener('click', () => togglePanel('cart', false));
+            const priceRange = document.getElementById('price-range'); const priceValue = document.getElementById('price-value'); priceRange.addEventListener('input', (e) => { activeFilters.price = parseInt(e.target.value); priceValue.textContent = `$${activeFilters.price}`; renderProjects(); }); document.getElementById('land-front').addEventListener('input', (e) => { activeFilters.front = e.target.value ? parseInt(e.target.value) : null; renderProjects(); }); document.getElementById('land-depth').addEventListener('input', (e) => { activeFilters.depth = e.target.value ? parseInt(e.target.value) : null; renderProjects(); });
+            function setupStarFilter(containerId, filterKey) { const container = document.getElementById(containerId); container.addEventListener('click', e => { if (e.target.classList.contains('star')) { const rating = parseInt(e.target.dataset.value); activeFilters[filterKey] = (activeFilters[filterKey] === rating) ? null : rating; container.querySelectorAll('.star').forEach((star, i) => { star.classList.toggle('active', activeFilters[filterKey] && i < activeFilters[filterKey]); }); renderProjects(); } }); }
+            setupStarFilter('project-star-rating-filter', 'projectRating'); setupStarFilter('architect-star-rating-filter', 'architectRating');
+            function setupButtonGroup(containerId, filterKey) { const container = document.getElementById(containerId); container.addEventListener('click', e => { if (e.target.tagName === 'BUTTON') { const value = parseInt(e.target.dataset.value); const isActive = e.target.classList.contains('active'); container.querySelectorAll('button').forEach(btn => btn.classList.remove('active')); if (isActive) { activeFilters[filterKey] = null; } else { e.target.classList.add('active'); activeFilters[filterKey] = value; } renderProjects(); } }); }
+            setupButtonGroup('bedrooms-filter', 'bedrooms'); setupButtonGroup('floors-filter', 'floors');
+            document.getElementById('clear-filters-btn').addEventListener('click', () => { activeFilters = { price: 5000, front: null, depth: null, projectRating: null, architectRating: null, bedrooms: null, floors: null }; priceRange.value = 5000; priceValue.textContent = '$5000'; document.getElementById('land-front').value = ''; document.getElementById('land-depth').value = ''; document.querySelectorAll('.star-rating .star').forEach(s => s.classList.remove('active')); document.querySelectorAll('.spec-btn-group button').forEach(b => b.classList.remove('active')); renderProjects(); });
+            document.body.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (!button) {
+                    const link = e.target.closest('a.architect-link');
+                    if (link) {
+                        e.preventDefault();
+                        openProfileModal(parseInt(link.dataset.id));
+                    }
+                    return;
+                }
+                if (button.matches('#get-started-btn')) { openLoginTypeModal(); }
+                if (button.matches('#login-btn')) { openUnifiedLoginModal(); }
+                if (button.matches('.view-packages-btn')) { openPurchaseModal(parseInt(button.dataset.id)); }
+                if (button.matches('.commission-project-btn')) { openChatModal(parseInt(button.dataset.id), 'commission'); }
+                if (button.matches('.customize-project-btn')) { const architectId = parseInt(button.dataset.architectId); const projectTitle = button.dataset.projectTitle; openChatModal(architectId, 'customization', projectTitle); }
+                if (button.matches('.wishlist-btn')) { button.classList.toggle('text-red-500'); button.querySelector('svg').classList.toggle('fill-current'); showToast('Project added to wishlist!'); }
+                if (button.matches('.share-btn')) { const title = button.dataset.title; const url = button.dataset.url; openShareModal(title, url); }
+            });
+            cartPanel.addEventListener('click', e => { if (e.target.matches('.remove-from-cart-btn')) { removeFromCart(parseInt(e.target.dataset.index)); } });
+            modalContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (!button) return;
+                if (button.matches('#switch-to-signup')) { closeModal('login-modal'); openLoginTypeModal(); }
+                if (button.matches('.start-video-call-btn')) showToast('Initiating video call...');
+                if (button.matches('.start-audio-call-btn')) showToast('Initiating audio call...');
+                if (button.matches('#add-to-cart-btn')) { const projectId = parseInt(button.dataset.id); const selectedPackages = []; modalContainer.querySelectorAll('.package-checkbox:checked').forEach(cb => { selectedPackages.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) }); }); addToCart(projectId, selectedPackages); }
+                const viewBtn = e.target.closest('.view-packages-btn-profile');
+                if (viewBtn) {
+                    openPurchaseModal(parseInt(viewBtn.closest('.project-card-profile').dataset.id));
+                }
+                const customizeBtn = e.target.closest('.customize-project-btn-profile');
+                if (customizeBtn) {
+                    openChatModal(parseInt(customizeBtn.dataset.architectId), 'customization', customizeBtn.dataset.projectTitle);
+                }
+                if (button.matches('.share-architect-btn')) {
+                    openShareModal(button.dataset.name, button.dataset.url);
+                }
+                if (button.matches('.commission-project-btn')) {
+                    openChatModal(parseInt(button.dataset.id), 'commission');
+                }
+                if (button.matches('#copy-link-btn')) {
+                    const urlInput = document.getElementById('share-url');
+                    urlInput.select();
+                    urlInput.setSelectionRange(0, 99999);
+                    try {
+                        document.execCommand('copy');
+                        showToast('Link copied!');
+                    } catch (err) {
+                        showToast('Failed to copy link.');
+                    }
+                }
+            });
+            modalContainer.addEventListener('change', e => { if (e.target.matches('.package-checkbox')) { const packagesList = document.getElementById('packages-list'); const totalPriceEl = document.getElementById('total-price'); const addToCartBtn = document.getElementById('add-to-cart-btn'); let totalPrice = 0; packagesList.querySelectorAll('.package-checkbox:checked').forEach(checkbox => { totalPrice += parseFloat(checkbox.dataset.price); }); totalPriceEl.textContent = `$${totalPrice.toFixed(2)}`; addToCartBtn.disabled = totalPrice === 0; } if (e.target.matches('#file-upload-chat')) { const fileName = e.target.files[0]?.name; if (fileName) showToast(`${fileName} has been uploaded.`); } });
+            modalContainer.addEventListener('submit', (e) => { if (e.target.matches('#chat-form')) { e.preventDefault(); const chatInput = document.getElementById('chat-input'); const chatMessages = document.getElementById('chat-messages'); const architectAvatar = architects.find(a => a.name === chatMessages.closest('.modal-content').querySelector('h3').textContent).avatar; if (chatInput.value.trim()) { const sanitizedMessage = chatInput.value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); chatMessages.innerHTML += `<div class="flex justify-end"><div class="chat-bubble-user p-3 rounded-lg max-w-md">${sanitizedMessage}</div></div>`; chatInput.value = ''; chatMessages.scrollTop = chatMessages.scrollHeight; setTimeout(() => { chatMessages.innerHTML += `<div class="flex gap-2.5"><img src="${architectAvatar}" class="w-8 h-8 rounded-full"><div class="chat-bubble-architect p-3 rounded-lg max-w-md">Thank you for the details. Let me review this. I will get back to you shortly. Once we agree on terms, I will request the necessary documents.</div></div>`; chatMessages.scrollTop = chatMessages.scrollHeight; }, 1500); } } });
+
+            // Showcase Carousel Logic
+            const showcaseSlider = document.getElementById('showcase-slider');
+            const showcaseItems = [
+                { type: 'image', src: "../public/lakeside_villa.jpg", title: 'Modern Lakeside Villa', architect: 'Studio MK27', projectId: 1 },
+                { type: 'video', src: 'https://www.youtube.com/embed/Scxs7L0vhZ4?autoplay=1&mute=1&loop=1&playlist=Scxs7L0vhZ4&controls=0', title: 'Archivolt Promotional Video', architect: 'Featured Promotion', projectId: null },
+                { type: 'image', src: "../public/farmhouse.jpg", title: 'Cozy Country Farmhouse', architect: 'Historical Concepts', projectId: 6 }
+            ];
+            showcaseSlider.innerHTML = showcaseItems.map(item => {
+                const content = item.type === 'video'
+                    ? `<iframe class="w-full h-full" src="${item.src}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+                    : `<img src="${item.src}" class="w-full h-full object-cover">`;
+                return `
+                    <div class="w-full h-full flex-shrink-0 relative">
+                        ${content}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h3 class="text-3xl font-bold font-serif">${item.title}</h3>
+                            <p class="text-lg">${item.architect}</p>
+                            ${item.projectId ? `<button class="view-packages-btn mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors" data-id="${item.projectId}">View Project</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const showcasePrev = document.getElementById('showcase-prev');
+            const showcaseNext = document.getElementById('showcase-next');
+            let showcaseIndex = 0;
+            let showcaseInterval = setInterval(goNext, 5000);
+
+            function goNext() {
+                showcaseIndex = (showcaseIndex + 1) % showcaseItems.length;
+                updateShowcase();
+            }
+
+            function updateShowcase() {
+                showcaseSlider.style.transform = `translateX(-${showcaseIndex * 100}%)`;
+            }
+
+            showcasePrev.addEventListener('click', () => {
+                showcaseIndex = (showcaseIndex - 1 + showcaseItems.length) % showcaseItems.length;
+                updateShowcase();
+                resetInterval();
+            });
+
+            showcaseNext.addEventListener('click', () => {
+                goNext();
+                resetInterval();
+            });
+
+            function resetInterval() {
+                clearInterval(showcaseInterval);
+                showcaseInterval = setInterval(goNext, 5000);
+            }
+
+            const showcaseCarousel = document.getElementById('showcase-carousel');
+            showcaseCarousel.addEventListener('mouseenter', () => clearInterval(showcaseInterval));
+            showcaseCarousel.addEventListener('mouseleave', () => resetInterval());
+        });
+    </script>
+</body>
+
+</html>

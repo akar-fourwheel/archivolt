@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Archivolt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <a href="index.html" class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-medium">
+            ← Back to Shopping
+        </a>
+        <div class="text-center mb-12">
+            <a href="index.html" class="text-4xl font-serif font-bold text-gray-900">
+                Archivolt
+            </a>
+            <h1 class="text-3xl font-bold text-gray-800 mt-4">Secure Checkout</h1>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Left Column: Billing and Payment -->
+            <div>
+                <form action="#" method="POST">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold border-b pb-4">Billing Information</h2>
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="first-name" class="block text-sm font-medium text-gray-700">First
+                                    name</label>
+                                <input type="text" id="first-name" autocomplete="given-name"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="last-name" class="block text-sm font-medium text-gray-700">Last name</label>
+                                <input type="text" id="last-name" autocomplete="family-name"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                                <input type="email" id="email" autocomplete="email"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                                <select id="country" autocomplete="country-name"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option>India</option>
+                                    <option>United States</option>
+                                    <option>Canada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-lg shadow-md mt-8">
+                        <h2 class="text-xl font-semibold border-b pb-4">Payment Details</h2>
+                        <div class="mt-6 space-y-6">
+                            <div>
+                                <label for="card-number" class="block text-sm font-medium text-gray-700">Card
+                                    number</label>
+                                <input type="text" id="card-number" placeholder="0000 0000 0000 0000"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="grid grid-cols-3 gap-6">
+                                <div>
+                                    <label for="expiration-date"
+                                        class="block text-sm font-medium text-gray-700">Expiration (MM/YY)</label>
+                                    <input type="text" id="expiration-date" placeholder="MM / YY"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div class="col-span-2">
+                                    <label for="cvc" class="block text-sm font-medium text-gray-700">CVC</label>
+                                    <input type="text" id="cvc" placeholder="123"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <a href="customer_profile.html#history"
+                            class="w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800">
+                            Place Order
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="bg-white p-8 rounded-lg shadow-md lg:h-fit">
+                <h2 class="text-xl font-semibold border-b pb-4">Order Summary</h2>
+                <div class="mt-6 flow-root">
+                    <ul class="divide-y divide-gray-200">
+                        <li class="py-4 flex items-start space-x-4">
+                            <img src="https://placehold.co/600x400/1a202c/ffffff?text=Lakeside+Villa"
+                                alt="Lakeside Villa" class="w-24 h-20 object-cover rounded-md flex-shrink-0">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Modern Lakeside Villa</h3>
+                                <p class="text-sm text-gray-500">Elevation Files</p>
+                            </div>
+                            <p class="font-semibold">$299.00</p>
+                        </li>
+                        <li class="py-4 flex items-start space-x-4">
+                            <img src="https://placehold.co/600x400/1a202c/ffffff?text=Lakeside+Villa"
+                                alt="Lakeside Villa" class="w-24 h-20 object-cover rounded-md flex-shrink-0">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Modern Lakeside Villa</h3>
+                                <p class="text-sm text-gray-500">Electrical & Plumbing</p>
+                            </div>
+                            <p class="font-semibold">$250.00</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-6 border-t pt-6 space-y-2">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <p>Subtotal</p>
+                        <p>$549.00</p>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <p>Taxes</p>
+                        <p>$43.92</p>
+                    </div>
+                    <div class="flex justify-between text-lg font-semibold text-gray-900 mt-2">
+                        <p>Total</p>
+                        <p>$592.92</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
