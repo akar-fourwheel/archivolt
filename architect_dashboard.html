@@ -35,7 +35,6 @@
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
-        /* Custom file input */
         .file-input-label {
             transition: background-color .2s ease-in-out;
         }
@@ -43,18 +42,97 @@
         .file-input-label:hover {
             background-color: #f9fafb;
         }
+
+        .conversation-item.active {
+            background-color: #f3f4f6;
+        }
+
+        .chat-bubble-user {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .chat-bubble-architect {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .view-toggle button.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .slider-container {
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .slider-item {
+            scroll-snap-align: start;
+        }
+
+        .slider-btn {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card-dashboard:hover .slider-btn {
+            opacity: 1;
+        }
+
+        .dots-container .dot.active {
+            background-color: white;
+        }
+
+        /* Mobile sidebar */
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
 </head>
 
 <body class="bg-gray-50">
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-40 hidden z-30 md:hidden"></div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+
     <div class="flex h-screen bg-gray-50">
         <!-- Sidebar -->
-        <aside id="sidebar" class="hidden md:flex w-64 flex-shrink-0 bg-white border-r border-gray-200 flex-col fixed md:relative z-40 inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
-            <div class="h-16 flex items-center justify-center border-b border-gray-200">
+        <aside id="sidebar"
+            class="sidebar fixed md:static inset-y-0 left-0 z-50 w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
+            <div class="h-16 flex items-center justify-between px-4 border-b border-gray-200">
                 <a href="#" class="text-2xl font-serif font-bold text-gray-900">Archivolt</a>
+                <button id="close-sidebar" class="md:hidden text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
             </div>
-            <nav class="flex-1 px-4 py-6 space-y-2">
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                 <a href="#dashboard"
                     class="sidebar-link active flex items-center px-4 py-2.5 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,17 +170,24 @@
                     </svg>
                     Inbox
                 </a>
-                <a href="#settings"
+                <a href="#payouts"
                     class="sidebar-link flex items-center px-4 py-2.5 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
                         </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
-                    Settings
+                    Payouts
+                </a>
+                <a href="#profile"
+                    class="sidebar-link flex items-center px-4 py-2.5 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    My Profile
                 </a>
             </nav>
             <div class="px-4 py-4 border-t">
@@ -120,93 +205,278 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white shadow-sm h-16 flex items-center justify-between px-4 sm:px-6">
-                <!-- Mobile Menu Button -->
-                <button id="sidebar-toggle" class="md:hidden text-gray-600 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            
-                <h1 id="page-title" class="text-lg sm:text-xl font-semibold text-gray-800">Dashboard</h1>
-            <!-- <header class="bg-white border-b border-gray-200">
-                <div class="px-6 py-4">
-                    <h1  class="text-2xl font-bold text-gray-900">Dashboard</h1>
-                </div> -->
+        <div class="flex-1 flex flex-col overflow-hidden w-full">
+            <header class="bg-white border-b border-gray-200">
+                <div class="px-4 md:px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="open-sidebar" class="md:hidden mr-3 text-gray-500 hover:text-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        <h1 id="page-title" class="text-xl md:text-2xl font-bold text-gray-900">Dashboard</h1>
+                    </div>
+                </div>
             </header>
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
 
                 <!-- Dashboard Section -->
                 <div id="dashboard" class="page-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Total Revenue</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">$48,350</p>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Total Revenue</h4>
+                            <p class="text-xl md:text-3xl font-bold text-gray-900 mt-1">$48,350</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Total Sales</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">152</p>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Total Sales</h4>
+                            <p class="text-xl md:text-3xl font-bold text-gray-900 mt-1">152</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Total Downloads</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">1,582</p>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Total Downloads</h4>
+                            <p class="text-xl md:text-3xl font-bold text-gray-900 mt-1">1,582</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">New Followers</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">+85</p>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">New Followers</h4>
+                            <p class="text-xl md:text-3xl font-bold text-gray-900 mt-1">+85</p>
                         </div>
                     </div>
-                    <div class="mt-8 bg-white p-6 rounded-lg shadow-sm">
-                        <h3 class="font-bold text-lg text-gray-800">Sales Over Last 6 Months</h3>
+                    <div class="mt-6 md:mt-8 bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-base md:text-lg text-gray-800">Sales Over Last 6 Months</h3>
                         <canvas id="salesChart" class="mt-4"></canvas>
+                    </div>
+
+                    <div id="dashboard-summaries" class="mt-6 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                        <!-- Summary widgets will be injected here -->
                     </div>
                 </div>
 
                 <!-- Projects Section -->
                 <div id="projects" class="page-content hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-gray-800">Your Projects</h2>
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-lg md:text-xl font-bold text-gray-800">Your Projects</h2>
+                            <div class="view-toggle flex items-center bg-gray-200 rounded-lg p-1 text-sm">
+                                <button id="list-view-btn" class="active px-2 md:px-3 py-1 rounded-md"
+                                    title="List View"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                    </svg></button>
+                                <button id="card-view-btn" class="px-2 md:px-3 py-1 rounded-md" title="Card View"><svg
+                                        class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                        </path>
+                                    </svg></button>
+                            </div>
+                        </div>
                         <button id="add-project-btn"
-                            class="bg-blue-600 text-white font-semibold px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base">
-                            Add New Project
-                        </button>
+                            class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-4 md:px-5 py-2 md:py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base">Add
+                            New Project</button>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+
+                    <!-- List View -->
+                    <div id="list-view" class="bg-white rounded-lg shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full">
-                                <thead class="min-w-full text-sm text-gray-800">
+                                <thead class="bg-gray-50">
                                     <tr>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Project Name</th>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Rating</th>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Sales</th>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-table-body" class="divide-y divide-gray-200">
+                                    <!-- Project rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Card View -->
+                    <div id="card-view"
+                        class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                        <!-- Project cards will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div id="analytics" class="page-content hidden space-y-6 md:space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Top Earning Project</h4>
+                            <p id="top-earner" class="text-lg md:text-xl font-bold text-gray-900 mt-1 truncate">-</p>
+                            <span id="top-earner-revenue" class="text-sm text-green-600 font-semibold">-</span>
+                        </div>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Most Downloaded</h4>
+                            <p id="most-downloaded" class="text-lg md:text-xl font-bold text-gray-900 mt-1 truncate">-
+                            </p><span id="most-downloaded-count" class="text-sm text-blue-600 font-semibold">-</span>
+                        </div>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Top Location</h4>
+                            <p id="top-location" class="text-lg md:text-xl font-bold text-gray-900 mt-1 truncate">-</p>
+                            <span id="top-location-count" class="text-sm text-gray-500 font-semibold">-</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div class="lg:col-span-2 bg-white rounded-lg shadow-sm overflow-hidden">
+                            <h3 class="font-bold text-base md:text-lg text-gray-800 p-4 md:p-6 border-b">Project
+                                Performance</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Project</th>
+                                            <th
+                                                class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Revenue</th>
+                                            <th
+                                                class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Sales</th>
+                                            <th
+                                                class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                                                Views</th>
+                                            <th
+                                                class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                                                Conversion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="analytics-table-body" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="space-y-4 md:space-y-6">
+                            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-base md:text-lg text-gray-800 mb-4">Geographic Insights</h3>
+                                <ul id="location-list" class="space-y-3 text-sm"></ul>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 p-4 md:p-6 rounded-lg">
+                                <h3 class="font-bold text-base md:text-lg text-blue-800 mb-4 flex items-center"><svg
+                                        class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                        </path>
+                                    </svg>Recommendations</h3>
+                                <ul id="recommendations-list"
+                                    class="space-y-2 text-sm text-blue-700 list-disc list-inside"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="inbox" class="page-content hidden h-[calc(100vh-8rem)]">
+                    <div class="flex flex-col md:flex-row h-full bg-white rounded-lg shadow-sm overflow-hidden">
+                        <!-- Conversation List -->
+                        <div
+                            class="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col max-h-64 md:max-h-none">
+                            <div class="p-4 border-b">
+                                <input type="search" placeholder="Search inbox..."
+                                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            </div>
+                            <div id="conversation-list" class="flex-1 overflow-y-auto">
+                                <!-- Conversations will be injected here -->
+                            </div>
+                        </div>
+                        <!-- Chat View -->
+                        <div id="chat-view" class="flex-1 flex flex-col min-h-0">
+                            <!-- Placeholder until a chat is selected -->
+                            <div class="flex-1 flex items-center justify-center text-center text-gray-500 p-4">
+                                <div>
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-gray-900">Select a conversation</h3>
+                                    <p class="mt-1 text-sm text-gray-500">Your messages with clients will appear here.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payouts Section -->
+                <div id="payouts" class="page-content hidden space-y-6 md:space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Available Balance</h4>
+                            <p class="text-2xl md:text-3xl font-bold text-green-600 mt-1">$12,450.75</p>
+                        </div>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Pending Payouts</h4>
+                            <p class="text-2xl md:text-3xl font-bold text-gray-900 mt-1">$2,100.00</p>
+                        </div>
+                        <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                            <h4 class="text-xs md:text-sm font-medium text-gray-500">Total Earned</h4>
+                            <p class="text-2xl md:text-3xl font-bold text-gray-900 mt-1">$48,350</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <div
+                            class="p-4 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b">
+                            <div>
+                                <h3 class="text-base md:text-lg font-bold text-gray-800">Payout Method</h3>
+                                <p class="text-sm text-gray-500 mt-1">Bank Account ending in **** 4567</p>
+                            </div>
+                            <button
+                                class="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 bg-white">Manage</button>
+                        </div>
+                        <div class="p-4 md:p-6">
+                            <button
+                                class="w-full md:w-auto bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">Request
+                                Withdrawal</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <h3 class="font-bold text-base md:text-lg text-gray-800 p-4 md:p-6 border-b">Withdrawal History
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Amount</th>
+                                        <th
+                                            class="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">Modern Lakeside Villa</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">4.8 (125)</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">82</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#"
-                                                class="text-blue-600 hover:text-blue-900">Edit</a><a href="#"
-                                                class="text-red-600 hover:text-red-900 ml-4">Delete</a></td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">Oct 1, 2025</td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap font-medium text-sm">$5,200.00
+                                        </td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap"><span
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">Oceanview Pavilion</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">4.9 (180)</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">70</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#"
-                                                class="text-blue-600 hover:text-blue-900">Edit</a><a href="#"
-                                                class="text-red-600 hover:text-red-900 ml-4">Delete</a></td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm">Sep 15, 2025</td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap font-medium text-sm">$2,100.00
+                                        </td>
+                                        <td class="px-3 md:px-6 py-4 whitespace-nowrap"><span
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -214,137 +484,81 @@
                     </div>
                 </div>
 
-                <!-- Other Sections (Placeholders) -->
-                <!-- Analytics Section -->
-                <div id="analytics" class="page-content hidden">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Analytics Overview</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white rounded-lg p-6 shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Conversion Rate</h4>
-                            <p class="text-3xl font-bold text-green-600 mt-1">6.2%</p>
-                            <span class="text-xs text-gray-400">+0.9% vs last month</span>
-                        </div>
-                        <div class="bg-white rounded-lg p-6 shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Active Users</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">1,025</p>
-                            <span class="text-xs text-gray-400">+48 new</span>
-                        </div>
-                        <div class="bg-white rounded-lg p-6 shadow-sm">
-                            <h4 class="text-sm font-medium text-gray-500">Avg. Session Duration</h4>
-                            <p class="text-3xl font-bold text-gray-900 mt-1">4m 32s</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
-                        <h3 class="font-bold text-lg text-gray-800">Top Performing Projects</h3>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm text-gray-800">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Name</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Impressions</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Leads</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Conversion</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium">Modern Lakeside Villa</td>
-                                        <td class="px-4 py-3 text-gray-600">4,980</td>
-                                        <td class="px-4 py-3 text-gray-600">226</td>
-                                        <td class="px-4 py-3 text-green-600">4.5%</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium">Oceanview Pavilion</td>
-                                        <td class="px-4 py-3 text-gray-600">3,610</td>
-                                        <td class="px-4 py-3 text-gray-600">148</td>
-                                        <td class="px-4 py-3 text-green-600">4.1%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
-                        <h3 class="font-bold text-lg text-gray-800">Engagement Trends</h3>
-                        <ul class="mt-4 space-y-2 text-sm text-gray-600">
-                            <li>Most traffic on weekends</li>
-                            <li>Desktop users: 63%, Mobile: 37%</li>
-                            <li>Peak hours: 7-9pm IST</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Inbox Section -->
-                <div id="inbox" class="page-content hidden">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Inbox</h2>
+                <!-- My Profile Section -->
+                <div id="profile" class="page-content hidden">
                     <div class="bg-white rounded-lg shadow-sm">
-                        <ul class="divide-y divide-gray-200">
-                            <li class="p-4 flex items-start">
-                                <span class="rounded-full bg-blue-100 text-blue-600 px-2 py-1 text-xs font-semibold mr-4">New</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Inquiry: Lakeside Villa Pricing</p>
-                                    <p class="text-sm text-gray-600">Hello, could you share more about the pricing & available packages
-                                        for the Lakeside Villa?</p>
-                                    <span class="text-xs text-gray-400">Received 20 mins ago</span>
+                        <form id="profile-form">
+                            <div class="p-4 md:p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div class="md:col-span-1">
+                                        <h3 class="text-base md:text-lg font-medium leading-6 text-gray-900">Profile
+                                        </h3>
+                                        <p class="mt-1 text-sm text-gray-500">This information will be displayed
+                                            publicly.</p>
+                                    </div>
+                                    <div class="md:col-span-2 space-y-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Photo</label>
+                                            <div class="mt-2 flex items-center space-x-4">
+                                                <img id="avatar-preview"
+                                                    src="https://placehold.co/128x128/1a202c/ffffff?text=MK"
+                                                    alt="Profile" class="h-16 w-16 md:h-20 md:w-20 rounded-full">
+                                                <input type="file" id="avatar-upload" class="hidden">
+                                                <button type="button"
+                                                    onclick="document.getElementById('avatar-upload').click()"
+                                                    class="bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Change</button>
+                                            </div>
+                                        </div>
+                                        <div><label class="block text-sm font-medium text-gray-700">Full
+                                                Name</label><input type="text" id="profile-name" required
+                                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base">
+                                        </div>
+                                        <div><label class="block text-sm font-medium text-gray-700">Bio</label><textarea
+                                                id="profile-bio" rows="4" required
+                                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                            </li>
-                            <li class="p-4 flex items-start">
-                                <span class="rounded-full bg-green-100 text-green-600 px-2 py-1 text-xs font-semibold mr-4">Lead</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Contact: Rajiv Mehta</p>
-                                    <p class="text-sm text-gray-600">Interested in discussing customizations for Oceanview Pavilion next
-                                        week.</p>
-                                    <span class="text-xs text-gray-400">Received 1 hour ago</span>
-                                </div>
-                            </li>
-                            <li class="p-4 flex items-start">
-                                <span class="rounded-full bg-gray-100 text-gray-600 px-2 py-1 text-xs font-semibold mr-4">Info</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Notice: Account Status</p>
-                                    <p class="text-sm text-gray-600">Reminder: Update your profile to keep receiving project updates.
-                                    </p>
-                                    <span class="text-xs text-gray-400">Received yesterday</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Settings Section -->
-                <div id="settings" class="page-content hidden">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Settings</h2>
-                    <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" value="user@archivolt.com" class="block w-full border-gray-300 rounded-md shadow-sm"
-                                disabled>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
-                            <input type="text" value="Archivolt User" class="block w-full border-gray-300 rounded-md shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
-                            <select class="block w-full border-gray-300 rounded-md shadow-sm">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Notifications</label>
-                            <div class="flex items-center space-x-6 mt-1">
-                                <label class="flex items-center"><input type="checkbox" checked
-                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded"> <span class="ml-2 text-sm">Email
-                                        Alerts</span></label>
-                                <label class="flex items-center"><input type="checkbox"
-                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded"> <span class="ml-2 text-sm">SMS
-                                        Updates</span></label>
                             </div>
-                        </div>
-                        <button class="mt-6 px-6 py-2 rounded-md font-semibold text-white bg-blue-600 hover:bg-blue-700">Save
-                            Changes</button>
+
+                            <div class="p-4 md:p-6 border-t">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div class="md:col-span-1">
+                                        <h3 class="text-base md:text-lg font-medium leading-6 text-gray-900">Social
+                                            Links</h3>
+                                        <p class="mt-1 text-sm text-gray-500">Add links to your social media and
+                                            website.</p>
+                                    </div>
+                                    <div class="md:col-span-2 space-y-4">
+                                        <div><label
+                                                class="block text-sm font-medium text-gray-700">Instagram</label><input
+                                                type="url" id="profile-instagram"
+                                                placeholder="https://instagram.com/..."
+                                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base">
+                                        </div>
+                                        <div><label
+                                                class="block text-sm font-medium text-gray-700">LinkedIn</label><input
+                                                type="url" id="profile-linkedin"
+                                                placeholder="https://linkedin.com/in/..."
+                                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base">
+                                        </div>
+                                        <div><label
+                                                class="block text-sm font-medium text-gray-700">Website</label><input
+                                                type="url" id="profile-website" placeholder="https://your-studio.com"
+                                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="px-4 md:px-6 py-4 bg-gray-50 text-right rounded-b-lg">
+                                <button type="submit"
+                                    class="w-full md:w-auto inline-flex justify-center py-2 px-5 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Save
+                                    Changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
 
             </main>
         </div>
@@ -355,6 +569,58 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const architectProjects = [
+                { id: 1, title: 'Modern Lakeside Villa', images: ['https://placehold.co/600x400/1a202c/ffffff?text=Exterior', 'https://placehold.co/600x400/2d3748/ffffff?text=Living+Room'], rating: 4.8, reviews: 125, sales: 82, views: 4100, revenue: 24518, specs: { area: 3200, floors: 2, beds: 4, baths: 3, front: 60, depth: 110 }, customizable: true, has3D: true, packages: [{ name: "Elevation Files", desc: "All exterior drawings", price: 299 }] },
+                { id: 2, title: 'Oceanview Pavilion', images: ['https://placehold.co/600x400/2d3748/ffffff?text=View', 'https://placehold.co/600x400/4a5568/ffffff?text=Pool'], rating: 4.9, reviews: 180, sales: 70, views: 3500, revenue: 23832, specs: { area: 4500, floors: 1, beds: 5, baths: 4, front: 90, depth: 140 }, customizable: true, has3D: true, packages: [{ name: "Full Construction Set", desc: "All drawings", price: 1299 }] }
+            ];
+
+            const mockConversations = [
+                { id: 1, clientName: 'Jane Cooper', clientAvatar: 'https://placehold.co/40x40/f87171/ffffff?text=JC', projectTitle: 'Modern Lakeside Villa', lastMessage: 'That sounds great, I will send over the plot plan shortly.', timestamp: '2h ago', type: 'text', unread: true },
+                { id: 2, clientName: 'John Smith', clientAvatar: 'https://placehold.co/40x40/60a5fa/ffffff?text=JS', projectTitle: 'Oceanview Pavilion', lastMessage: 'Requesting a video call to discuss customizations.', timestamp: '8h ago', type: 'video', unread: true },
+                { id: 3, clientName: 'Michael Brown', clientAvatar: 'https://placehold.co/40x40/fbbf24/ffffff?text=MB', projectTitle: 'New Commission', lastMessage: 'Hey, I was wondering if you take on new commissions?', timestamp: '1d ago', type: 'text', unread: false },
+                { id: 4, clientName: 'Emily White', clientAvatar: 'https://placehold.co/40x40/a78bfa/ffffff?text=EW', projectTitle: 'Modern Lakeside Villa', lastMessage: 'Requesting an audio call to clarify a few things.', timestamp: '3d ago', type: 'audio', unread: false },
+            ];
+
+            const architectProfile = {
+                name: 'Studio MK27',
+                bio: 'A leading Brazilian firm founded by Marcio Kogan, known for its sustainable and modern designs.',
+                avatar: 'https://placehold.co/128x128/1a202c/ffffff?text=MK',
+                social: { instagram: 'https://instagram.com/studiomk27', linkedin: 'https://linkedin.com/company/studiomk27', website: 'https://studiomk27.com.br' }
+            };
+
+            let currentProjectView = 'list';
+
+            // --- MOBILE SIDEBAR ---
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const openSidebarBtn = document.getElementById('open-sidebar');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+
+            openSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('show');
+            });
+
+            closeSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+            });
+
+            // Close sidebar on navigation (mobile)
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                        sidebar.classList.remove('open');
+                        sidebarOverlay.classList.remove('show');
+                    }
+                });
+            });
+
             // --- MODALS ---
             function openModal(modalId, content) {
                 const modal = document.createElement('div');
@@ -374,63 +640,250 @@
                 setTimeout(() => modal.remove(), 300);
             }
 
-            // --- ADD PROJECT MODAL ---
-            function openAddProjectModal() {
+            // --- ADD/EDIT PROJECT MODAL ---
+            function openAddProjectModal(project = null) {
+                const isEditing = project !== null;
+                const modalTitle = isEditing ? 'Edit Project' : 'Add New Project';
+                const saveButtonText = isEditing ? 'Save Changes' : 'Save Project';
+
                 const content = `
                     <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col transform scale-95 opacity-0">
-                        <header class="p-6 border-b">
-                            <div class="flex justify-between items-center">
-                                <h2 class="text-2xl font-serif font-bold">Add New Project</h2>
-                                <button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button>
-                            </div>
-                        </header>
-                        <form id="add-project-form" class="flex-1 overflow-y-auto p-6 space-y-6">
-                            <div><label class="block text-sm font-medium text-gray-700">Project Title</label><input type="text" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                            <div><label class="block text-sm font-medium text-gray-700">Description</label><textarea rows="3" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
+                        <header class="p-4 md:p-6 border-b"><div class="flex justify-between items-center"><h2 class="text-xl md:text-2xl font-serif font-bold">${modalTitle}</h2><button class="close-modal-btn text-gray-400 hover:text-gray-700 text-3xl leading-none">&times;</button></div></header>
+                        <form id="add-project-form" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
+                            <div><label class="block text-sm font-medium text-gray-700">Project Title</label><input type="text" name="title" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Description</label><textarea name="description" rows="3" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></textarea></div>
                             <div><label class="block text-sm font-medium text-gray-700">Images (up to 5)</label><input type="file" multiple accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/></div>
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div><label class="block text-sm font-medium text-gray-700">Area (sqft)</label><input type="number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Floors</label><input type="number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Bedrooms</label><input type="number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Bathrooms</label><input type="number" step="0.5" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Land Front (ft)</label><input type="number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-                                <div><label class="block text-sm font-medium text-gray-700">Land Depth (ft)</label><input type="number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                                <div><label class="block text-sm font-medium text-gray-700">Area (sqft)</label><input type="number" name="area" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Floors</label><input type="number" name="floors" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Bedrooms</label><input type="number" name="beds" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Bathrooms</label><input type="number" step="0.5" name="baths" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Land Front (ft)</label><input type="number" name="front" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
+                                <div><label class="block text-sm font-medium text-gray-700">Land Depth (ft)</label><input type="number" name="depth" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm md:text-base"></div>
                              </div>
-                             <div class="flex items-start space-x-6">
-                                <div class="flex items-center"><input type="checkbox" id="customizable" class="h-4 w-4 text-blue-600 border-gray-300 rounded"><label for="customizable" class="ml-2 block text-sm text-gray-900">Project is customizable</label></div>
-                                <div class="flex items-center"><input type="checkbox" id="3d-preview" class="h-4 w-4 text-blue-600 border-gray-300 rounded"><label for="3d-preview" class="ml-2 block text-sm text-gray-900">Has 3D Preview</label></div>
+                             <div class="flex flex-col sm:flex-row items-start sm:space-x-6 space-y-3 sm:space-y-0">
+                                <div class="flex items-center"><input type="checkbox" id="customizable" name="customizable" class="h-4 w-4 text-blue-600 border-gray-300 rounded"><label for="customizable" class="ml-2 block text-sm text-gray-900">Project is customizable</label></div>
+                                <div class="flex items-center"><input type="checkbox" id="3d-preview" name="has3D" class="h-4 w-4 text-blue-600 border-gray-300 rounded"><label for="3d-preview" class="ml-2 block text-sm text-gray-900">Has 3D Preview</label></div>
                              </div>
-                             
-                             <!-- Dynamic Packages -->
                              <div>
-                                <h3 class="text-md font-medium text-gray-800 border-b pb-2 mb-4">File Packages</h3>
-                                <div id="packages-container" class="space-y-4">
-                                    <!-- Package rows will be injected here -->
-                                </div>
+                                <h3 class="text-sm md:text-base font-medium text-gray-800 border-b pb-2 mb-4">File Packages</h3>
+                                <div id="packages-container" class="space-y-4"></div>
                                 <button type="button" id="add-package-btn" class="mt-4 text-sm font-semibold text-blue-600 hover:text-blue-800">+ Add another package</button>
                              </div>
                         </form>
-                        <footer class="p-6 bg-gray-50 border-t flex justify-end">
+                        <footer class="p-4 md:p-6 bg-gray-50 border-t flex flex-col sm:flex-row justify-end gap-2">
                             <button type="button" class="close-modal-btn bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                            <button type="submit" form="add-project-form" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Save Project</button>
+                            <button type="submit" form="add-project-form" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">${saveButtonText}</button>
                         </footer>
                     </div>
                 `;
                 openModal('add-project-modal', content);
-                addPackageRow(); // Add the first row by default
+
+                const form = document.getElementById('add-project-form');
+
+                if (isEditing) {
+                    form.querySelector('[name="title"]').value = project.title;
+                    form.querySelector('[name="area"]').value = project.specs.area;
+                    form.querySelector('[name="floors"]').value = project.specs.floors;
+                    form.querySelector('[name="beds"]').value = project.specs.beds;
+                    form.querySelector('[name="baths"]').value = project.specs.baths;
+                    form.querySelector('[name="front"]').value = project.specs.front;
+                    form.querySelector('[name="depth"]').value = project.specs.depth;
+                    form.querySelector('[name="customizable"]').checked = project.customizable;
+                    form.querySelector('[name="has3D"]').checked = project.has3D;
+
+                    project.packages.forEach(pkg => addPackageRow(pkg));
+                } else {
+                    addPackageRow();
+                }
             }
 
-            function addPackageRow() {
+            function addPackageRow(pkg = null) {
                 const container = document.getElementById('packages-container');
                 const row = document.createElement('div');
-                row.className = 'grid grid-cols-12 gap-x-4 items-start';
+                row.className = 'grid grid-cols-12 gap-x-2 md:gap-x-4 items-start';
                 row.innerHTML = `
-                    <div class="col-span-4"><label class="text-xs text-gray-600">Package Name</label><input type="text" placeholder="e.g., Elevation Files" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2"></div>
-                    <div class="col-span-5"><label class="text-xs text-gray-600">Description</label><input type="text" placeholder="e.g., All exterior drawings" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2"></div>
-                    <div class="col-span-2"><label class="text-xs text-gray-600">Price ($)</label><input type="number" placeholder="299" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2"></div>
-                    <div class="col-span-1 flex items-end h-full pb-1"><button type="button" class="remove-package-btn text-red-500 hover:text-red-700 p-1 rounded-full">&times;</button></div>
+                    <div class="col-span-12 sm:col-span-4"><label class="text-xs text-gray-600">Package Name</label><input type="text" placeholder="e.g., Elevation Files" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2" value="${pkg ? pkg.name : ''}"></div>
+                    <div class="col-span-12 sm:col-span-5 mt-3 sm:mt-0"><label class="text-xs text-gray-600">Description</label><input type="text" placeholder="e.g., All exterior drawings" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2" value="${pkg ? pkg.desc : ''}"></div>
+                    <div class="col-span-10 sm:col-span-2 mt-3 sm:mt-0"><label class="text-xs text-gray-600">Price ($)</label><input type="number" placeholder="299" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm p-2" value="${pkg ? pkg.price : ''}"></div>
+                    <div class="col-span-2 sm:col-span-1 flex items-end h-full pb-1 mt-3 sm:mt-0"><button type="button" class="remove-package-btn text-red-500 hover:text-red-700 p-1 rounded-full text-xl">&times;</button></div>
                 `;
                 container.appendChild(row);
+            }
+
+            // --- DATA RENDERING ---
+            function renderProjectsView() {
+                const listView = document.getElementById('list-view');
+                const cardView = document.getElementById('card-view');
+
+                if (currentProjectView === 'list') {
+                    listView.classList.remove('hidden');
+                    cardView.classList.add('hidden');
+                    renderProjectTable();
+                } else {
+                    listView.classList.add('hidden');
+                    cardView.classList.remove('hidden');
+                    renderProjectCards();
+                }
+            }
+
+            function renderProjectTable() {
+                const tableBody = document.getElementById('projects-table-body');
+                tableBody.innerHTML = architectProjects.map(p => `
+                    <tr>
+                        <td class="px-3 md:px-6 py-4 whitespace-nowrap font-medium text-sm">${p.title}</td>
+                        <td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${p.rating} (${p.reviews})</td>
+                        <td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${p.sales}</td>
+                        <td class="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="edit-btn text-blue-600 hover:text-blue-900" data-id="${p.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-900 ml-2 md:ml-4" data-id="${p.id}">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            function renderProjectCards() {
+                const cardContainer = document.getElementById('card-view');
+                cardContainer.innerHTML = architectProjects.map(p => `
+                    <div class="project-card-dashboard flex flex-col bg-white rounded-xl shadow-md overflow-hidden group">
+                        <div class="relative">
+                            <div class="slider-container flex overflow-x-scroll scroll-smooth snap-x snap-mandatory rounded-t-xl h-40">${p.images.map(img => `<div class="slider-item w-full h-full flex-shrink-0"><img src="${img}" class="w-full h-full object-cover" alt="${p.title}"></div>`).join('')}</div>
+                            <button class="slider-btn prev absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 p-1 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <button class="slider-btn next absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 p-1 rounded-full text-gray-800 hover:bg-white focus:outline-none"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                            <div class="dots-container absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">${p.images.map((_, i) => `<button class="dot w-2 h-2 rounded-full bg-white/50 transition" data-slide="${i}"></button>`).join('')}</div>
+                        </div>
+                        <div class="p-4 flex flex-col flex-1">
+                            <h3 class="text-base md:text-lg font-bold text-gray-900">${p.title}</h3>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                <span class="font-bold text-gray-800 ml-1">${p.rating.toFixed(1)}</span>
+                                <span class="ml-2">(${p.reviews} reviews)</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">${p.sales} Sales • ${p.revenue.toLocaleString()} Revenue</p>
+                            <div class="mt-auto pt-4 border-t mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+                                <button class="edit-btn text-sm font-semibold text-blue-600 hover:text-blue-900 text-center" data-id="${p.id}">Edit Project</button>
+                                <button class="text-sm font-semibold text-red-600 hover:text-red-900 text-center" data-id="${p.id}">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                setupCardCarousels(cardContainer);
+            }
+
+            function setupCardCarousels(container) {
+                container.querySelectorAll('.project-card-dashboard').forEach(card => {
+                    const slider = card.querySelector('.slider-container');
+                    const prevBtn = card.querySelector('.prev');
+                    const nextBtn = card.querySelector('.next');
+                    const dots = card.querySelectorAll('.dot');
+                    if (!slider) return;
+                    function updateDots(index) { dots.forEach((dot, i) => dot.classList.toggle('active', i === index)); }
+                    slider.addEventListener('scroll', () => { updateDots(Math.round(slider.scrollLeft / slider.clientWidth)); });
+                    prevBtn.addEventListener('click', () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' }));
+                    nextBtn.addEventListener('click', () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' }));
+                    dots.forEach((dot, i) => dot.addEventListener('click', () => slider.scrollTo({ left: i * slider.clientWidth, behavior: 'smooth' })));
+                    updateDots(0);
+                });
+            }
+
+            function renderAnalytics() {
+                const topEarner = [...architectProjects].sort((a, b) => b.revenue - a.revenue)[0];
+                const mostDownloaded = [...architectProjects].sort((a, b) => b.sales - a.sales)[0];
+                document.getElementById('top-earner').textContent = topEarner.title;
+                document.getElementById('top-earner-revenue').textContent = `${topEarner.revenue.toLocaleString()}`;
+                document.getElementById('most-downloaded').textContent = mostDownloaded.title;
+                document.getElementById('most-downloaded-count').textContent = `${mostDownloaded.sales} sales`;
+                const locations = [{ name: 'USA', count: 60 }, { name: 'Canada', count: 25 }, { name: 'United Kingdom', count: 18 }, { name: 'Australia', count: 15 }];
+                document.getElementById('top-location').textContent = locations[0].name;
+                document.getElementById('top-location-count').textContent = `${locations[0].count} sales`;
+                document.getElementById('location-list').innerHTML = locations.map(l => `<li><div class="flex justify-between"><span>${l.name}</span><span class="font-semibold">${l.count} sales</span></div></li>`).join('');
+                const analyticsTableBody = document.getElementById('analytics-table-body');
+                analyticsTableBody.innerHTML = architectProjects.map(p => {
+                    const conversion = ((p.sales / p.views) * 100).toFixed(2);
+                    return `<tr><td class="px-3 md:px-6 py-4 whitespace-nowrap font-medium text-sm">${p.title}</td><td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-600 text-sm">${p.revenue.toLocaleString()}</td><td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-600 text-sm">${p.sales}</td><td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-600 text-sm hidden sm:table-cell">${p.views.toLocaleString()}</td><td class="px-3 md:px-6 py-4 whitespace-nowrap text-gray-600 text-sm font-semibold hidden md:table-cell ${conversion > 2 ? 'text-green-600' : 'text-yellow-600'}">${conversion}%</td></tr>`;
+                }).join('');
+                const recommendations = ['Your modern designs have a high conversion rate. Consider adding more.', 'Promote "Oceanview Pavilion" on social media to increase its views.', 'Consider adding an "Electrical Plan" package to "Modern Lakeside Villa".'];
+                document.getElementById('recommendations-list').innerHTML = recommendations.map(r => `<li>${r}</li>`).join('');
+            }
+
+            function renderInbox() {
+                const conversationList = document.getElementById('conversation-list');
+                conversationList.innerHTML = mockConversations.map(c => {
+                    let icon = '';
+                    if (c.type === 'video') icon = `<svg class="w-4 h-4 md:w-5 md:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
+                    if (c.type === 'audio') icon = `<svg class="w-4 h-4 md:w-5 md:h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>`;
+                    if (c.type === 'text') icon = `<svg class="w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>`;
+                    return `
+                        <a href="#" class="conversation-item flex items-start p-3 md:p-4 border-b border-gray-200 hover:bg-gray-50" data-id="${c.id}">
+                            <img src="${c.clientAvatar}" alt="${c.clientName}" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 md:mr-4">
+                            <div class="flex-1 overflow-hidden min-w-0">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-semibold truncate text-sm md:text-base">${c.clientName}</h4>
+                                    <span class="text-xs text-gray-500 flex-shrink-0 ml-2">${c.timestamp}</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-gray-600 truncate">${c.projectTitle}</p>
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-xs md:text-sm text-gray-500 truncate pr-2 md:pr-4">${c.lastMessage}</p>
+                                    <div class="flex-shrink-0">${icon}</div>
+                                </div>
+                            </div>
+                             ${c.unread ? '<div class="w-2 h-2 md:w-2.5 md:h-2.5 bg-blue-500 rounded-full ml-2 self-center flex-shrink-0"></div>' : ''}
+                        </a>
+                    `;
+                }).join('');
+            }
+
+            function renderChat(conversationId) {
+                const conversation = mockConversations.find(c => c.id === conversationId);
+                const chatView = document.getElementById('chat-view');
+                chatView.innerHTML = `
+                    <header class="p-3 md:p-4 border-b flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-sm md:text-base">${conversation.clientName}</h3>
+                            <p class="text-xs md:text-sm text-gray-500">Regarding: ${conversation.projectTitle}</p>
+                        </div>
+                        <div><!-- Action buttons can go here --></div>
+                    </header>
+                    <div class="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto">
+                         <div class="flex gap-2.5">
+                            <img src="${conversation.clientAvatar}" class="w-6 h-6 md:w-8 md:h-8 rounded-full">
+                            <div class="chat-bubble-user p-2 md:p-3 rounded-lg max-w-md text-sm md:text-base">${conversation.lastMessage}</div>
+                        </div>
+                         <div class="flex justify-end">
+                            <div class="chat-bubble-architect p-2 md:p-3 rounded-lg max-w-md text-sm md:text-base">Got it. Let me check the details and I will get back to you.</div>
+                        </div>
+                    </div>
+                    <footer class="p-3 md:p-4 bg-gray-50 border-t">
+                        <form class="flex items-center gap-2 md:gap-3">
+                            <textarea placeholder="Type your message..." class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm md:text-base p-2 resize-none" rows="1"></textarea>
+                            <button type="submit" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors flex-shrink-0"><svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
+                        </form>
+                    </footer>
+                `;
+            }
+
+            function renderDashboardSummaries() {
+                const container = document.getElementById('dashboard-summaries');
+                const recentProjects = architectProjects.slice(0, 2);
+                const firstUnread = mockConversations.find(c => c.unread);
+                const topProject = [...architectProjects].sort((a, b) => b.revenue - a.revenue)[0];
+                const totalRevenue = architectProjects.reduce((sum, p) => sum + p.revenue, 0);
+
+                container.innerHTML = `
+                    <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-base md:text-lg text-gray-800">Recent Projects</h3><a href="#projects" class="text-sm font-semibold text-blue-600 hover:underline">View All</a></div><ul class="space-y-4">${recentProjects.map(p => `<li class="flex items-center space-x-3 md:space-x-4"><img src="${p.images[0]}" alt="${p.title}" class="w-12 h-10 md:w-16 md:h-12 rounded-md object-cover"><div class="flex-1 min-w-0"><p class="font-semibold text-gray-900 text-sm md:text-base truncate">${p.title}</p><p class="text-xs md:text-sm text-gray-500">${p.sales} sales • ${p.revenue.toLocaleString()} revenue</p></div></li>`).join('')}</ul></div>
+                    <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-base md:text-lg text-gray-800">Recent Activity</h3><a href="#inbox" class="text-sm font-semibold text-blue-600 hover:underline">Go to Inbox</a></div><ul class="space-y-4">${firstUnread ? `<li class="flex items-start space-x-3 md:space-x-4"><img src="${firstUnread.clientAvatar}" alt="${firstUnread.clientName}" class="w-8 h-8 md:w-10 md:h-10 rounded-full"><div class="flex-1 min-w-0"><p class="font-semibold text-gray-900 text-sm md:text-base">${firstUnread.clientName} <span class="text-xs text-gray-500 font-normal">re: ${firstUnread.projectTitle}</span></p><p class="text-xs md:text-sm text-gray-500 truncate">${firstUnread.lastMessage}</p></div></li>` : '<p class="text-sm text-gray-500">No new messages.</p>'}</ul></div>
+                    <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm"><h3 class="font-bold text-base md:text-lg text-gray-800">Payouts</h3><p class="text-sm text-gray-500 mt-2">Your current available balance is ready for withdrawal.</p><p class="text-3xl md:text-4xl font-bold text-green-600 mt-2">$12,450.75</p><a href="#payouts" class="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">Manage Payouts →</a></div>
+                    <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm"><h3 class="font-bold text-base md:text-lg text-gray-800">Performance Snapshot</h3><div class="mt-4"><p class="text-sm text-gray-500">Top Performing Project</p><p class="font-semibold text-gray-900 truncate text-sm md:text-base">${topProject.title}</p><div class="mt-2 h-2 w-full bg-gray-200 rounded-full"><div class="h-2 bg-blue-500 rounded-full" style="width: ${((topProject.revenue / totalRevenue) * 100).toFixed(0)}%;"></div></div><p class="text-xs text-right text-gray-500 mt-1">${((topProject.revenue / totalRevenue) * 100).toFixed(0)}% of total revenue</p></div><a href="#analytics" class="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">View Full Analytics →</a></div>
+                `;
+            }
+
+            function populateProfileForm() {
+                document.getElementById('avatar-preview').src = architectProfile.avatar;
+                document.getElementById('profile-name').value = architectProfile.name;
+                document.getElementById('profile-bio').value = architectProfile.bio;
+                document.getElementById('profile-instagram').value = architectProfile.social.instagram;
+                document.getElementById('profile-linkedin').value = architectProfile.social.linkedin;
+                document.getElementById('profile-website').value = architectProfile.social.website;
             }
 
             // --- PAGE NAVIGATION ---
@@ -444,6 +897,15 @@
                 if (page) {
                     page.classList.remove('hidden');
                     document.getElementById('page-title').textContent = link.textContent.trim();
+                    if (hash === '#dashboard') {
+                        renderDashboardSummaries();
+                    } else if (hash === '#analytics') {
+                        renderAnalytics();
+                    } else if (hash === '#inbox') {
+                        renderInbox();
+                    } else if (hash === '#profile') {
+                        populateProfileForm();
+                    }
                 }
                 if (link) link.classList.add('active');
             }
@@ -464,14 +926,40 @@
                         fill: true,
                     }]
                 },
-                options: { scales: { y: { beginAtZero: true } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: { y: { beginAtZero: true } },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        }
+                    }
+                }
             });
 
             // --- EVENT LISTENERS ---
             window.addEventListener('hashchange', () => switchPage(window.location.hash || '#dashboard'));
-            switchPage(window.location.hash || '#dashboard'); // Initial page load
+            switchPage(window.location.hash || '#dashboard');
+            renderProjectsView();
 
-            document.getElementById('add-project-btn').addEventListener('click', openAddProjectModal);
+            document.getElementById('add-project-btn').addEventListener('click', () => openAddProjectModal());
+
+            document.getElementById('projects').addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-btn');
+                if (editBtn) {
+                    e.preventDefault();
+                    const projectId = parseInt(editBtn.dataset.id);
+                    const projectToEdit = architectProjects.find(p => p.id === projectId);
+                    if (projectToEdit) {
+                        openAddProjectModal(projectToEdit);
+                    }
+                }
+            });
 
             document.getElementById('modal-container').addEventListener('click', (e) => {
                 if (e.target.matches('#add-package-btn')) {
@@ -485,36 +973,54 @@
             document.getElementById('modal-container').addEventListener('submit', (e) => {
                 if (e.target.matches('#add-project-form')) {
                     e.preventDefault();
-                    // In a real app, you would process the form data here
                     console.log('Form submitted');
                     closeModal('add-project-modal');
                 }
             });
-        });
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
 
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hidden');
-                sidebar.classList.toggle('-translate-x-full');
-                backdrop.classList.toggle('hidden');
+            document.getElementById('profile-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                console.log('Profile form submitted');
             });
 
-            backdrop.addEventListener('click', () => {
-                sidebar.classList.add('hidden', '-translate-x-full');
-                backdrop.classList.add('hidden');
+            document.getElementById('avatar-upload').addEventListener('change', function (event) {
+                if (event.target.files && event.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('avatar-preview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                }
             });
-            // Auto-close sidebar on mobile when a link is clicked
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 768) { // Only on mobile
-                        sidebar.classList.add('hidden', '-translate-x-full');
-                        backdrop.classList.add('hidden');
+
+            const conversationListEl = document.getElementById('conversation-list');
+            if (conversationListEl) {
+                conversationListEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const item = e.target.closest('.conversation-item');
+                    if (item) {
+                        const conversationId = parseInt(item.dataset.id);
+                        document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+                        renderChat(conversationId);
                     }
                 });
+            }
+
+            document.getElementById('list-view-btn').addEventListener('click', () => {
+                currentProjectView = 'list';
+                document.getElementById('list-view-btn').classList.add('active');
+                document.getElementById('card-view-btn').classList.remove('active');
+                renderProjectsView();
             });
 
+            document.getElementById('card-view-btn').addEventListener('click', () => {
+                currentProjectView = 'card';
+                document.getElementById('card-view-btn').classList.add('active');
+                document.getElementById('list-view-btn').classList.remove('active');
+                renderProjectsView();
+            });
+        });
     </script>
 </body>
 
